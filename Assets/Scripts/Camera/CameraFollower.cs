@@ -4,13 +4,19 @@ using UnityEngine;
 
 public class CameraFollower : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public GameObject followed;
+
+    public float distance;
+    public float height;
+
+    private Vector3 position;
+
+    private void Update()
+    {
+        position = followed.transform.position;
+        // keep the height
+        position.y += height;
+        position.z -= distance;
+        transform.position = position;
+    }
 }
