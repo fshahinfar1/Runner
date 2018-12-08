@@ -15,9 +15,8 @@ public class RoadUpdateTrigger : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter");
         position = roadLooper.Place();
-        position.z -= 4;
+        position.z -= 2;
         transform.position = position; 
     }
 }

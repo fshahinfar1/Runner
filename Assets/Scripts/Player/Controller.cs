@@ -26,7 +26,8 @@ namespace Player
             float horizontalNormal = Input.GetAxis("Horizontal");
 
             velocity = rigidbody.velocity;
-            velocity.z = maxPartialSpeed * verticalNormal;
+            //velocity.z = maxPartialSpeed * verticalNormal;
+            velocity.z = maxPartialSpeed;
             velocity.x = maxPartialSpeed * horizontalNormal;
             rigidbody.velocity = velocity;
         }

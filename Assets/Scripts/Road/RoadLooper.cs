@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class RoadLooper : MonoBehaviour
 {
-
-    public GameObject trigger;
-    private Transform plane;
-    private Transform otherPlane;
+    private Queue<Transform> planeQueue;
 
     private float planeWidth = 10;
 
@@ -15,19 +12,17 @@ public class RoadLooper : MonoBehaviour
 
     private void Awake()
     {
-        plane = transform.GetChild(0);
-        otherPlane = transform.GetChild(1);
+        planeQueue.Enqueue(transform.GetChild(0));
+        planeQueue.Enqueue(transform.GetChild(1));
     }
 
     public Vector3 Place()
     {
-        position = otherPlane.position;
+        Transform plane = planeQueue.Dequeue();
+        position = plane.position;
         position.z += planeWidth - 1;
         plane.position = position;
-        // Swap
-        Transform tmp = otherPlane;
-        otherPlane = plane;
-        plane = tmp;
+        planeQueue.Enqueue(plane);
         return position;
     }
 }
