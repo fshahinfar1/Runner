@@ -10,26 +10,28 @@ namespace Player
     {
 
         private new Rigidbody rigidbody;
-        private Vector3 velocity;
-
-        private float maxPartialSpeed = 3;
+        private PlayerState state;
 
         private void Awake()
         {
             rigidbody = transform.GetComponent<Rigidbody>();
+            state = PlayerState.GetInstance();
         }
 
         void Update()
         {
+            state.SetVelocity(rigidbody.velocity);
 
-            float verticalNormal = Input.GetAxis("Vertical");
             float horizontalNormal = Input.GetAxis("Horizontal");
+            float verticalNormal = Input.GetAxis("Vertical");
+            float jumpNormal = Input.GetAxis("Jump");
 
-            velocity = rigidbody.velocity;
-            //velocity.z = maxPartialSpeed * verticalNormal;
-            velocity.z = maxPartialSpeed;
-            velocity.x = maxPartialSpeed * horizontalNormal;
-            rigidbody.velocity = velocity;
+
+            state.updateHorizontalSpeed(horizontalNormal);
+            state.updateVerticalSpeed(verticalNormal);
+            state.Jump(jumpNormal);
+
+            rigidbody.velocity = state.GetVelocity();
         }
     }
 }
