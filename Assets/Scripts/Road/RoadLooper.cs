@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RoadLooper : MonoBehaviour
 {
-    private Queue<Transform> planeQueue;
+    private Queue<Transform> planeQueue = new Queue<Transform>();
 
     private float planeWidth = 10;
 
@@ -19,10 +19,11 @@ public class RoadLooper : MonoBehaviour
     public Vector3 Place()
     {
         Transform plane = planeQueue.Dequeue();
-        position = plane.position;
+        Transform nextPlane = planeQueue.Peek();
+        position = nextPlane.position;
         position.z += planeWidth - 1;
-        plane.position = position;
-        planeQueue.Enqueue(plane);
+        plane.position = position;  // place current plane after next plane
+        planeQueue.Enqueue(plane);  // put current plane back to queue
         return position;
     }
 }
