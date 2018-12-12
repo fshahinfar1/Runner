@@ -2,4 +2,5 @@
 {
     Cube,
     Empty,
+    Ramp,
 }
