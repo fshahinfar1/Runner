@@ -10,12 +10,12 @@ public class RoadUpdateTrigger : MonoBehaviour {
 
     private void Awake()
     {
-        roadLooper = transform.parent.GetComponent<RoadLooper>();
+        roadLooper = Object.FindObjectOfType<RoadLooper>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        position = roadLooper.Place();
+        position = roadLooper.Place(RoadPlacerLogic.nextRoad());
         position.z -= 2;
         transform.position = position; 
     }

@@ -4,26 +4,59 @@ using UnityEngine;
 
 public class RoadLooper : MonoBehaviour
 {
-    private Queue<Transform> planeQueue = new Queue<Transform>();
+    private bool initialized = false;
+
+    private RoadCollection collection;
 
     private float planeWidth = 10;
 
-    private Vector3 position;
+    private Vector3 position;  // current road component position
 
     private void Awake()
     {
-        planeQueue.Enqueue(transform.GetChild(0));
-        planeQueue.Enqueue(transform.GetChild(1));
+        if (!initialized)
+        {
+            Initialize();
+        }
     }
 
-    public Vector3 Place()
+    private void Initialize()
     {
-        Transform plane = planeQueue.Dequeue();
-        Transform nextPlane = planeQueue.Peek();
-        position = nextPlane.position;
+
+        RoadComponent component = transform.GetChild(0).GetComponent<RoadComponent>();
+        collection = new RoadCollection(component);
+
+        int count = transform.childCount;
+        for (int i=1; i<count; i++)
+        {
+            component = transform.GetChild(i).GetComponent<RoadComponent>();
+            collection.Add(component);
+            collection.Place(component.GetRoadType());
+        }
+    }
+
+    /// <summary>
+    /// place road component of the given type after this road
+    /// component
+    /// </summary>
+    /// <param name="type">type of next road component</param>
+    /// <returns>position of place road component</returns>
+    public Vector3 Place(RoadType type)
+    {
+        RoadComponent shouldBePlacedRoad = collection.Get(type);
+        RoadComponent currentRoad = collection.GetCurrentRoadComponent();
+        currentRoad.SetActive(false);
+
+        // get last placed road
+        RoadComponent lastRoad = collection.GetLastRoadComponent();
+        // get position of last placed road 
+        position = lastRoad.GetPosition();
+        // move position forwad for finding position of next road
         position.z += planeWidth - 1;
-        plane.position = position;  // place current plane after next plane
-        planeQueue.Enqueue(plane);  // put current plane back to queue
+        shouldBePlacedRoad.SetPosition(position);  // place new road after the last road
+        collection.Place(type);  // a new road has been placed
+        shouldBePlacedRoad.SetActive(true);
+        collection.Next();  // update collection current road to next road
         return position;
     }
 }
