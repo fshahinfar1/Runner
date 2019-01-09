@@ -11,8 +11,8 @@ public class AIController : MonoBehaviour {
         Right,
         Jump,
     }
-
     private int countMoves = 3;
+
     private float responseDelay = 0.3f; // seconds
     private float timer = 0;
 
@@ -20,6 +20,9 @@ public class AIController : MonoBehaviour {
     private Player.CharacterInput inputInterface;
 
     public StatExtractor consultor;
+
+    private GameStat lastStat;
+    private Moves lastMove;
 
 
     private void Awake()
@@ -42,9 +45,24 @@ public class AIController : MonoBehaviour {
     private void Respond ()
     {
         Debug.Log("AI responds!");
+
+        // get the current state
         GameStat stat = consultor.GetStat();
+
+        // calculate last action reward
+        float reward = GetReward(lastStat, stat);
+        
+        // learn from last action
+        Feedback(reward, lastStat, lastMove, stat);
+        
+        // choose an action for this situation
         Moves move = ChooseAction(stat);
+        
+        // performe the action
         Act(move);
+        
+        // remember action so you can evaluate and learn
+        lastStat = stat;
     }
 
     private Moves ChooseAction(GameStat stat)
@@ -72,6 +90,16 @@ public class AIController : MonoBehaviour {
     private GameStat Predict(GameStat stat, Moves move)
     {
         return stat;
+    }
+
+    private float GetReward(GameStat last, GameStat current)
+    {
+        return 0;
+    }
+
+    private void Feedback(float reward, GameStat last, Moves move, GameStat current)
+    {
+
     }
 }
 
