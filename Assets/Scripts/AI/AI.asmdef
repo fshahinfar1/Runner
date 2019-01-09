@@ -1,0 +1,11 @@
+{
+    "name": "AI",
+    "references": [
+        "Player",
+        "Stats"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
