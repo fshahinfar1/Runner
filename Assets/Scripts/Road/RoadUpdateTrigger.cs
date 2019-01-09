@@ -15,8 +15,14 @@ public class RoadUpdateTrigger : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        position = roadLooper.Place(RoadPlacerLogic.nextRoad());
-        position.z -= 2;
-        transform.position = position; 
+        if (other.gameObject.tag == "Player")
+        {
+            if (!other.isTrigger)
+            {
+                position = roadLooper.Place(RoadPlacerLogic.nextRoad());
+                position.z -= 2;
+                transform.position = position;
+            }
+        }
     }
 }
