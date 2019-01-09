@@ -19,12 +19,26 @@ namespace Player {
 
         private void OnTriggerEnter(Collider other)
         {
-            hitGround = true;
+            if (other.gameObject.tag == "Ground")
+            {
+                hitGround = true;
+                if (hit != null)
+                {
+                    hit();
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            hitGround = false;
+            if (other.gameObject.tag == "Ground")
+            {
+                hitGround = false;
+                if (leave != null)
+                {
+                    leave();
+                }
+            }
         }
 
         public bool GroundState()

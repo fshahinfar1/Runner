@@ -12,7 +12,7 @@ namespace Player
         public CharacterInput player;
         public float horizontalSensitivity = 0.3f;
         public float verticalSensitivity = 0.3f;
-        public float jumpSensitivity = 0.0f;
+        public float jumpSensitivity = 0.1f;
 
         private void Awake()
         {
@@ -47,7 +47,7 @@ namespace Player
             }
             
             float jumpNormal = Input.GetAxis("Jump");
-            if (jumpNormal > jumpSensitivity)
+            if (Input.GetKeyUp(KeyCode.Space))
             {
                 player.Jump();
             }
