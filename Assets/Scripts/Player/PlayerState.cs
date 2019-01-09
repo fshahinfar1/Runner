@@ -6,20 +6,20 @@ namespace Player
 {
     public class PlayerState
     {
-        private static PlayerState instance = new PlayerState();
-        public static PlayerState GetInstance()
-        {
-            if (instance == null)
-            {
-                instance = new PlayerState();
-            }
-            return instance;
-        }
+        //private static PlayerState instance = new PlayerState();
+        //public static PlayerState GetInstance()
+        //{
+        //    if (instance == null)
+        //    {
+        //        instance = new PlayerState();
+        //    }
+        //    return instance;
+        //}
 
-        public static void DestroyInstance()
-        {
-            instance = null;
-        }
+        //public static void DestroyInstance()
+        //{
+        //    instance = null;
+        //}
 
         private Vector3 velocity;
 
@@ -28,7 +28,7 @@ namespace Player
 
         private bool canJump;
 
-        private PlayerState()
+        public PlayerState()
         {
             velocity = new Vector3();
 
