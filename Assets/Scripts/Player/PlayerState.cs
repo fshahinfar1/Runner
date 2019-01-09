@@ -48,16 +48,9 @@ namespace Player
             velocity.z = maxPartialSpeed;
         }
 
-        public void Jump(float jumpNormal)
+        public void Jump()
         {
-            if (jumpNormal > 0.5)
-            {
-                if (canJump)
-                {
-                    canJump = false;
-                    velocity.y = jumpNormal * jumpForce;
-                }
-            }
+            velocity.y = jumpForce;
         }
 
         public void SetVelocity(Vector3 velocity)
@@ -68,6 +61,16 @@ namespace Player
         public Vector3 GetVelocity()
         {
             return velocity;
+        }
+
+        public bool CanJump()
+        {
+            return canJump;
+        }
+
+        public void UpdateCanJump(bool state)
+        {
+            canJump = state;
         }
     }
 }

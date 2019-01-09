@@ -4,8 +4,7 @@ using UnityEngine;
 
 
 namespace Player {
-    public interface Character {
-
+    public interface CharacterInput {
         void HorizontalMove(float magnitude);
         void VerticalMove(float magnitude);
         void Jump();

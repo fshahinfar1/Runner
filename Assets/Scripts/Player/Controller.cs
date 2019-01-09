@@ -9,7 +9,7 @@ namespace Player
     public class Controller : MonoBehaviour
     {
 
-        public Character player;
+        public CharacterInput player;
         public float horizontalSensitivity = 0.3f;
         public float verticalSensitivity = 0.3f;
         public float jumpSensitivity = 0.0f;
