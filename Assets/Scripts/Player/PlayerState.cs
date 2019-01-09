@@ -28,6 +28,8 @@ namespace Player
 
         private bool canJump;
 
+        private Mode mode;
+
         public PlayerState()
         {
             velocity = new Vector3();
@@ -35,6 +37,7 @@ namespace Player
             maxPartialSpeed = 3;
             jumpForce = 10;
             canJump = true;
+            mode = Mode.Ground;
         }
 
         public void updateHorizontalSpeed (float horizontalNormal)
@@ -72,5 +75,21 @@ namespace Player
         {
             canJump = state;
         }
+
+        public Mode GetMode()
+        {
+            return mode;
+        }
+
+        public void SetMode(Mode mode)
+        {
+            this.mode = mode;
+        }
+    }
+
+    public enum Mode
+    {
+        Ground,
+        Air,
     }
 }

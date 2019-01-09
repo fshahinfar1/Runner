@@ -29,6 +29,16 @@ namespace Player
             {
                 Debug.LogError("Ground detector not found!");
             }
+
+            // check player Mode
+            if (gd.GroundState())
+            {
+                state.SetMode(Mode.Ground);
+            }
+            else
+            {
+                state.SetMode(Mode.Air);
+            }
         }
 
         private void Update()
@@ -46,12 +56,14 @@ namespace Player
         // Ground detection
         private void HitGround()
         {
-            state.UpdateCanJump(false);
+            state.UpdateCanJump(true);
+            state.SetMode(Mode.Ground);
         }
 
         private void LeaveGround()
         {
-            state.UpdateCanJump(true);
+            state.UpdateCanJump(false);
+            state.SetMode(Mode.Air);
         }
 
         // Character Input Interface
@@ -75,6 +87,7 @@ namespace Player
             {
                 state.Jump();
                 state.UpdateCanJump(false);
+                state.SetMode(Mode.Air);
 
                 rigidbody.velocity = state.GetVelocity();
             }
