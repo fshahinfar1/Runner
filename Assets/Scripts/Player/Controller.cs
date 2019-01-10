@@ -9,27 +9,48 @@ namespace Player
     public class Controller : MonoBehaviour
     {
 
-        private new Rigidbody rigidbody;
-        private Vector3 velocity;
-
-        private float maxPartialSpeed = 3;
+        public CharacterInput player;
+        public float horizontalSensitivity = 0.3f;
+        public float verticalSensitivity = 0.3f;
+        public float jumpSensitivity = 0.1f;
 
         private void Awake()
         {
-            rigidbody = transform.GetComponent<Rigidbody>();
+            if (horizontalSensitivity < 0)
+            {
+                Debug.LogWarning("Horizontal sensitivity is negative!!!");
+            }
+
+            if (verticalSensitivity < 0)
+            {
+                Debug.Log("Vertival sensitivity is negative!!!");
+            }
+
+            if (jumpSensitivity < 0)
+            {
+                Debug.LogWarning("Jump sensitivity is negative");
+            }
         }
 
         void Update()
         {
+            float horizontalNormal = Input.GetAxis("Horizontal");
+            if (Mathf.Abs(horizontalNormal) > horizontalSensitivity)
+            {
+                player.HorizontalMove(horizontalNormal);
+            }
 
             float verticalNormal = Input.GetAxis("Vertical");
-            float horizontalNormal = Input.GetAxis("Horizontal");
-
-            velocity = rigidbody.velocity;
-            //velocity.z = maxPartialSpeed * verticalNormal;
-            velocity.z = maxPartialSpeed;
-            velocity.x = maxPartialSpeed * horizontalNormal;
-            rigidbody.velocity = velocity;
+            if (Mathf.Abs(verticalNormal) > verticalSensitivity)
+            {
+                player.VerticalMove(verticalNormal);
+            }
+            
+            float jumpNormal = Input.GetAxis("Jump");
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                player.Jump();
+            }
         }
     }
 }

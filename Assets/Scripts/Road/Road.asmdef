@@ -1,0 +1,10 @@
+{
+    "name": "Road",
+    "references": [
+        "Obstacles"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
