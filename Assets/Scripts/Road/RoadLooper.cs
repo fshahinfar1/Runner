@@ -59,4 +59,9 @@ public class RoadLooper : MonoBehaviour
         collection.Next();  // update collection current road to next road
         return position;
     }
+
+    public RoadComponent GetLastRoad()
+    {
+        return collection.GetLastRoadComponent();
+    }
 }

@@ -1,6 +1,8 @@
 {
     "name": "Road",
-    "references": [],
+    "references": [
+        "Obstacles"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

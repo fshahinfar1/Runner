@@ -24,7 +24,7 @@ namespace Stat
             foreach (ObstacleStat ob in obstacles)
             {
                 Vector3 dist = ob.DistanceTo(playerPos);
-                Debug.Log(dist.ToString());
+                //Debug.Log(dist.ToString());
             }
         }
 
