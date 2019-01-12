@@ -3,4 +3,6 @@
     Cube,
     Empty,
     Ramp,
+    Wall,
+    Puzzle,
 }
