@@ -35,7 +35,7 @@ namespace Player
             velocity = new Vector3();
 
             maxPartialSpeed = 3;
-            jumpForce = 10;
+            jumpForce = 7;
             canJump = true;
             mode = Mode.Ground;
         }

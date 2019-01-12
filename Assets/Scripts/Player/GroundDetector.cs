@@ -17,26 +17,40 @@ namespace Player {
             hitGround = false;
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void Hit()
         {
-            if (other.gameObject.tag == "Ground")
+            Debug.Log("Hit Ground!");
+            hitGround = true;
+            if (hit != null)
             {
-                hitGround = true;
-                if (hit != null)
-                {
-                    hit();
-                }
+                hit();
             }
         }
 
-        private void OnTriggerExit(Collider other)
+        private void Leave()
         {
-            if (other.gameObject.tag == "Ground")
+            Debug.Log("Leave Ground!");
+            hitGround = false;
+            if (leave != null)
             {
-                hitGround = false;
-                if (leave != null)
+                leave();
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (Physics.Raycast(transform.position, Vector3.down, 0.6f))
+            {
+                if (!hitGround)
                 {
-                    leave();
+                    Hit();
+                }
+            }
+            else
+            {
+                if (hitGround)
+                {
+                    Leave();
                 }
             }
         }

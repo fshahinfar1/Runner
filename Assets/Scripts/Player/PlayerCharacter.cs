@@ -41,14 +41,9 @@ namespace Player
             }
         }
 
-        private void Update()
-        {
-            // update state velocity
-            state.SetVelocity(rigidbody.velocity);
-        }
-
         private void FixedUpdate()
         {
+            state.SetVelocity(rigidbody.velocity);
             state.updateVerticalSpeed(1);
             rigidbody.velocity = state.GetVelocity();
         }
