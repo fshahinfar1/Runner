@@ -43,6 +43,6 @@ public class RoadUpdateTrigger : MonoBehaviour {
         ObstacleMap map = obstacleGenretor.Generate();
         // place obstacles on the new road
         GameObject road = roadLooper.GetLastRoad().gameObject;
-        obstaclePlacer.Place(road, map);
+        //obstaclePlacer.Place(road, map);
     }
 }
