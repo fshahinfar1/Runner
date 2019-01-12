@@ -13,7 +13,7 @@ namespace Player
         private void Awake()
         {
             rigidbody = transform.GetComponent<Rigidbody>();
-            rigidbody.mass = 10;
+            rigidbody.mass = 1;
             rigidbody.useGravity = true;
             rigidbody.drag = 0.1f;
 

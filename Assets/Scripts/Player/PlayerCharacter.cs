@@ -64,8 +64,18 @@ namespace Player
         // Character Input Interface
         public void HorizontalMove(float magnitude)
         {
-            state.updateHorizontalSpeed(magnitude);
-            rigidbody.velocity = state.GetVelocity();
+            Vector3 direction = Vector3.left;
+            if (magnitude > 0)
+            {
+                direction = Vector3.right;
+            }
+
+            if (!Physics.Raycast(transform.position, direction, 0.6f))
+            {
+                state.updateHorizontalSpeed(magnitude);
+                //rigidbody.velocity = state.GetVelocity();
+                rigidbody.AddRelativeForce(direction * (10 - Mathf.Abs(rigidbody.velocity.x)));
+            }
         }
 
         public void VerticalMove(float magnitude)
