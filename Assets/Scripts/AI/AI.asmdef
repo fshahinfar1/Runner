@@ -2,10 +2,15 @@
     "name": "AI",
     "references": [
         "Player",
-        "Stats"
+        "Stats",
+        "Utils"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }
