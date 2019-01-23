@@ -10,6 +10,8 @@ namespace Player
         public PlayerState state;
         private Rigidbody rigidbody;
 
+        public float forwardSpeed = 5.0f;
+
         private void Awake()
         {
             state = new PlayerState();
@@ -43,9 +45,12 @@ namespace Player
 
         private void FixedUpdate()
         {
-            state.SetVelocity(rigidbody.velocity);
-            state.updateVerticalSpeed(1);
-            rigidbody.velocity = state.GetVelocity();
+            //state.SetVelocity(rigidbody.velocity);
+            //state.updateVerticalSpeed(1);
+            //rigidbody.velocity = state.GetVelocity();
+
+            float f = Mathf.Max(forwardSpeed - rigidbody.velocity.z, 0);
+            rigidbody.AddRelativeForce(Vector3.forward * f, ForceMode.VelocityChange);
         }
 
         // Ground detection

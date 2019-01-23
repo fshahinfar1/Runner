@@ -12,12 +12,12 @@ namespace Player
 
         private void Awake()
         {
-            rigidbody = transform.GetComponent<Rigidbody>();
-            rigidbody.mass = 1;
-            rigidbody.useGravity = true;
-            rigidbody.drag = 0.1f;
+            //rigidbody = transform.GetComponent<Rigidbody>();
+            //rigidbody.mass = 1;
+            //rigidbody.useGravity = true;
+            //rigidbody.drag = 0.1f;
 
-            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+            //rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         }
     }
 }
