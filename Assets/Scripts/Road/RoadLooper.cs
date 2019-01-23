@@ -52,7 +52,7 @@ public class RoadLooper : MonoBehaviour
         // get position of last placed road 
         position = lastRoad.GetPosition();
         // move position forwad for finding position of next road
-        position.z += planeWidth - 1;
+        position.z += planeWidth;
         shouldBePlacedRoad.SetPosition(position);  // place new road after the last road
         collection.Place(type);  // a new road has been placed
         shouldBePlacedRoad.SetActive(true);
@@ -63,5 +63,22 @@ public class RoadLooper : MonoBehaviour
     public RoadComponent GetLastRoad()
     {
         return collection.GetLastRoadComponent();
+    }
+
+    public RoadComponent GetRoadByIndex(int index)
+    {
+        return collection.GetRoadByIndex(index);
+    }
+
+    public Vector3 ResetOrigin()
+    {
+        Vector3 diff = collection.GetCurrentRoadComponent().GetPosition();
+
+        foreach (RoadComponent rc in collection)
+        {
+            Vector3 pos = rc.GetPosition() - diff;
+            rc.SetPosition(pos);
+        }
+        return diff;
     }
 }

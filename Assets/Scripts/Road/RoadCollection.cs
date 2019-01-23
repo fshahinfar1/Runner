@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoadCollection
+public class RoadCollection: IEnumerable
 {
     RoadType currentRoad;
     Dictionary<RoadType, RoadComponent> collection;
@@ -91,5 +91,21 @@ public class RoadCollection
         {
             Debug.LogError("RoadCollection:Next: no next road component");
         }
+    }
+
+    public RoadComponent GetRoadByIndex(int index)
+    {
+        int count = placedRoadsByOrder.Count;
+        if (count > index)
+        {
+            RoadType type = placedRoadsByOrder[index];
+            return collection[type];
+        }
+        return null;
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        return collection.Values.GetEnumerator();
     }
 }

@@ -31,4 +31,15 @@ public class RoadComponent : MonoBehaviour {
     {
         gameObject.SetActive(value);
     }
+
+    public List<Transform> GetObstacles()
+    {
+        Transform obstacles = transform.Find("Obstacles");
+        List<Transform> result = new List<Transform>(obstacles.childCount);
+        foreach (Transform obs in obstacles)
+        {
+            result.Add(obs);
+        }
+        return result;
+    }
 }

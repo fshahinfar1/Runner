@@ -12,6 +12,8 @@ public class RoadUpdateTrigger : MonoBehaviour {
 
     private Vector3 position;
 
+    public float ResetOriginThreshhold=80.0f;
+
     private void Awake()
     {
         roadLooper = Object.FindObjectOfType<RoadLooper>();
@@ -25,18 +27,30 @@ public class RoadUpdateTrigger : MonoBehaviour {
         {
             if (!other.isTrigger)
             {
+                if (ShouldResetOrigin())
+                {
+                    Vector3 diff = roadLooper.ResetOrigin();
+                    Vector3 pos = other.transform.position - diff;
+                    other.transform.position = pos;
+                }
                 UpdateRoad();
             }
         }
     }
 
+    private bool ShouldResetOrigin()
+    {
+        return position.z > ResetOriginThreshhold;
+    }
+
     private void UpdateRoad()
     {
         // place a road
-        position = roadLooper.Place(RoadPlacerLogic.nextRoad());
-        
+        roadLooper.Place(RoadPlacerLogic.nextRoad());
+
+        position = roadLooper.GetRoadByIndex(1).GetPosition(); // next road;
         // move trigger to a new position
-        position.z -= 2;
+        position.z += 2;
         transform.position = position;
 
         // design how obstacles should be
