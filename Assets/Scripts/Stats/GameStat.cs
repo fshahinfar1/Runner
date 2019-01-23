@@ -6,10 +6,10 @@ namespace Stat
 {
     public struct GameStat
     {
-        bool loose;
-        bool points;
-        float frontDanger;
-        float leftDanger;
-        float rightDanger;
+        public bool loose;
+        public bool points;
+        public float frontDanger;
+        public float leftDanger;
+        public float rightDanger;
     }
 }

@@ -10,7 +10,7 @@ namespace Stat
         public Vector3 DistanceTo(Vector3 pos)
         {
             Vector3 obPos = this.transform.position;
-            return (obPos - pos);
+            return (pos - obPos);
         }
     }
 }
