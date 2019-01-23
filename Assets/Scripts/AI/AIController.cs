@@ -92,6 +92,15 @@ namespace AI {
         {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
+
+            float chance = Random.Range(0, 1);
+            if (chance < epsilon)
+            {
+                action = (Moves)Mathf.Floor(Random.Range(0, countMoves + 0.99f));
+                value = QValue(stat, action);
+                return action;
+            }
+            
             for (int move=0; move < countMoves; move++)
             {
                 float qValue = QValue(stat, (Moves)move);   
