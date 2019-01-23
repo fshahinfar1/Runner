@@ -8,5 +8,6 @@ namespace Player {
         void HorizontalMove(float magnitude);
         void VerticalMove(float magnitude);
         void Jump();
+        bool IsOutOfControl();
     }
 }

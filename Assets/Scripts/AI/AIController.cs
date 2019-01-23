@@ -33,6 +33,8 @@ namespace AI {
         private float discount = 0.80f;
         private float epsilon = 0.20f;
 
+        private bool lost = false;
+
         private void Awake()
         {
             inputInterface = player.GetComponent<Player.PlayerCharacter>();
@@ -44,6 +46,9 @@ namespace AI {
 
         private void Update()
         {
+            if (lost)
+                return;
+
             if (timer >= responseDelay)
             {
                 timer = 0;
@@ -60,6 +65,7 @@ namespace AI {
 
             // get the current state
             GameStat stat = consultor.GetStat();
+            stat.lose = inputInterface.IsOutOfControl(); // todo: this should be in GameStat extractor
 
             // calculate last action reward
             float reward = GetReward(lastStat, stat);
@@ -77,6 +83,10 @@ namespace AI {
             // remember action so you can evaluate and learn
             lastStat = stat;
             lastMoveValue = value;
+
+            // if  Ai lost the game
+            if (stat.lose)
+                lost = true;
         }
 
         private float QValue(GameStat stat, Moves move)
@@ -176,6 +186,16 @@ namespace AI {
             {
                 weigths[i] += learningRate * discount * difference;
             }
+        }
+
+        public bool HasLost()
+        {
+            return lost;
+        }
+
+        public void Refresh()
+        {
+            lost = false;
         }
     }
 }

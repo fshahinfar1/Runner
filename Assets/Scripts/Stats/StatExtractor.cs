@@ -57,8 +57,8 @@ namespace Stat
                 {
                     newStat.frontDanger = Mathf.Max(newStat.frontDanger, danger);
                 }
-                Debug.Log("Dist: " + dist);
-                Debug.Log("Danger: " + danger);
+                //Debug.Log("Dist: " + dist);
+                //Debug.Log("Danger: " + danger);
             }
 
             stat = newStat;

@@ -58,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 700158700e4398340be1a92aa014ec3a, type: 2}
+  - {fileID: 2100000, guid: 1b72ab3be17c3aa49b6d6219c53d47f2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -201,7 +201,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 700158700e4398340be1a92aa014ec3a, type: 2}
+  - {fileID: 2100000, guid: 1b72ab3be17c3aa49b6d6219c53d47f2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 23851397621298916}
   - component: {fileID: 65701532179648402}
   - component: {fileID: 114896926516873598}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 23279825490277786}
   - component: {fileID: 65829267204452618}
   - component: {fileID: 114213534409175176}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (2)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -455,7 +455,7 @@ GameObject:
   - component: {fileID: 23670123770114546}
   - component: {fileID: 65440336818596482}
   - component: {fileID: 114854050892847246}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (8)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -559,7 +559,7 @@ GameObject:
   - component: {fileID: 23192355049724958}
   - component: {fileID: 65038139269715434}
   - component: {fileID: 114083425509584900}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (6)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -663,7 +663,7 @@ GameObject:
   - component: {fileID: 23637984531302690}
   - component: {fileID: 65352745778625454}
   - component: {fileID: 114756101041039488}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (1)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -767,7 +767,7 @@ GameObject:
   - component: {fileID: 23039025056404978}
   - component: {fileID: 65280673055779192}
   - component: {fileID: 114223448104378470}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (7)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -916,7 +916,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: df959f501ec61fd4cae6afedebaddc05, type: 2}
+  - {fileID: 2100000, guid: 32a013bcd9c46c346a5884235b5ccaad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -963,7 +963,7 @@ GameObject:
   - component: {fileID: 23365420684546736}
   - component: {fileID: 65444472683654592}
   - component: {fileID: 114051445933783744}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (4)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -1114,7 +1114,7 @@ GameObject:
   - component: {fileID: 23169541615444272}
   - component: {fileID: 65918882853534444}
   - component: {fileID: 114285223521501748}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (5)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -1218,7 +1218,7 @@ GameObject:
   - component: {fileID: 23531420505972394}
   - component: {fileID: 65552080097499304}
   - component: {fileID: 114281733355306646}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube (3)
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
