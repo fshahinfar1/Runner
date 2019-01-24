@@ -110,6 +110,7 @@ namespace AI {
 
             // remember action so you can evaluate and learn
             lastStat = stat;
+            lastMove = move;
             lastMoveValue = value;
 
             // if  Ai lost the game
@@ -120,7 +121,6 @@ namespace AI {
         private float QValue(GameStat stat, Moves move)
         {
             int pos = stat.pos;
-            Debug.Log((int)move);
             return QMat[pos, stat.dist[pos], (int)move];
         }
 

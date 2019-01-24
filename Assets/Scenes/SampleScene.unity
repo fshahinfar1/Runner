@@ -759,7 +759,6 @@ MonoBehaviour:
   player: {fileID: 2089400141}
   consultor: {fileID: 1599912455}
   keyboard: {fileID: 913062764}
-  weigths: []
   learningRate: 0.01
   discount: 0.8
   epsilon: 0
