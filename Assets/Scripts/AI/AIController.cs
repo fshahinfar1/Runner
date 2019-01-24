@@ -29,15 +29,14 @@ namespace AI {
         private GameStat lastStat;
         private Moves lastMove = Moves.Nothing;
         private float lastMoveValue;
-        private float[] lastMoveFeatures;
-
-        public float[] weigths;
 
         public float learningRate = 0.01f;
         public float discount = 0.80f;
         public float epsilon = 0.20f;
 
         private bool lost = false;
+
+        private float[,,] QMat;
 
         private void Awake()
         {
@@ -47,7 +46,14 @@ namespace AI {
                 Debug.LogError("Input interface not found");
             }
 
-            weigths = new float[3] { 0, 0, 0 };
+
+            QMat = DataStore.Load("QMat");
+
+            if (QMat == null)
+            {
+                Debug.LogWarning("Coudln't load QMat!");
+                QMat = new float[10, 5, 3];
+            }
 
             // initialize random seed
             Random.InitState((int) System.DateTime.Now.TimeOfDay.Ticks);
@@ -94,11 +100,10 @@ namespace AI {
 
             // choose an action for this situation
             float value;
-            float[] features;
-            Moves move = ChooseAction(stat, out value, out features);
+            Moves move = ChooseAction(stat, out value);
 
             // learn from last action
-            Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value, lastMoveFeatures);
+            Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value);
 
             // performe the action
             Act(move);
@@ -106,25 +111,20 @@ namespace AI {
             // remember action so you can evaluate and learn
             lastStat = stat;
             lastMoveValue = value;
-            lastMoveFeatures = features;
 
             // if  Ai lost the game
             if (stat.lose)
-                lost = true;
-
-            Debug.Log(string.Format("w: {0}, {1}, {2}", weigths[0], weigths[1], weigths[2]));
+                Lost();
         }
 
-        private float QValue(GameStat stat, Moves move, out float[] features)
+        private float QValue(GameStat stat, Moves move)
         {
-            GameStat predictedStat = Predict(stat, (Moves)move);
-            float value = 0;
-            features = FeatureExtractor.Extract(predictedStat);
-            value = Vectors.Dot(features, weigths);
-            return value;
+            int pos = stat.pos;
+            Debug.Log((int)move);
+            return QMat[pos, stat.dist[pos], (int)move];
         }
 
-        private Moves ChooseAction(GameStat stat, out float value, out float[] features)
+        private Moves ChooseAction(GameStat stat, out float value)
         {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
@@ -132,21 +132,25 @@ namespace AI {
             float chance = Random.Range(0, 1);
             if (chance < epsilon)
             {
-                action = (Moves)Mathf.Floor(Random.Range(0, countMoves + 0.99f));
-                value = QValue(stat, action, out features);
+                action = (Moves)Mathf.Floor(Random.Range(0, countMoves));
+                value = QValue(stat, action);
                 return action;
             }
 
-            features = null;
             for (int move=0; move < countMoves; move++)
             {
-                float[] feats;
-                float qValue = QValue(stat, (Moves)move, out feats);   
+                Moves m = (Moves)move;
+                //if ((m == Moves.Left && !stat.canLeft) || 
+                //    (m == Moves.Right && !stat.canRight))
+                //{
+                //    continue;
+                //}
+
+                float qValue = QValue(stat, m);   
                 if (qValue > maxVal)
                 {
                     maxVal = qValue;
-                    action = (Moves)move;
-                    features = feats;
+                    action = m;
                 }
             }
             Debug.Log("Action: " + action.ToString());
@@ -161,42 +165,6 @@ namespace AI {
             keyboard.SetAction(move);
         }
 
-        private GameStat Predict(GameStat stat, Moves move)
-        {
-            // very weak prediction
-            GameStat predict = new GameStat(stat);
-            float zSpeed = predict.zSpeed;
-
-            switch (move)
-            {
-                case Moves.Nothing:
-                    predict.leftDanger += zSpeed * responseDelay;
-                    predict.rightDanger += zSpeed * responseDelay;
-                    predict.frontDanger += zSpeed * responseDelay;
-                    if (predict.frontDanger > 0.5)
-                        predict.lose = true;
-                    predict.points += 1;
-                    break;
-                case Moves.Left:
-                    if (predict.leftDanger < 0.9)
-                    {
-                        predict.frontDanger = predict.leftDanger;
-                        predict.leftDanger *= 0.5f;
-                        predict.points += 1;
-                    }
-                    break;
-                case Moves.Right:
-                    if (predict.rightDanger < 0.9)
-                    {
-                        predict.frontDanger = predict.rightDanger;
-                        predict.rightDanger *= 0.5f;
-                        predict.points += 1;
-                    }
-                    break;
-            }
-            return predict;
-        }
-
         private float GetReward(GameStat last, GameStat current)
         {
             if (current.lose)
@@ -207,17 +175,23 @@ namespace AI {
         }
 
         private void Feedback(float reward, float lastStatePredictedValue, GameStat last,
-            Moves move, GameStat current, float currentStatePredictedValue, float[] lastFeatures)
+            Moves move, GameStat current, float currentStatePredictedValue)
         {
-            if (lastFeatures == null)
+            if (last.dist == null)
                 return;
 
-            float difference = (reward + discount * currentStatePredictedValue) - lastStatePredictedValue;
+            float difference = (reward + discount * currentStatePredictedValue)
+                - lastStatePredictedValue;
 
-            for (int i=0; i < weigths.Length; i++)
-            {
-                weigths[i] += learningRate * difference * lastFeatures[i];
-            }
+            int lastPos = last.pos;
+            int lastDist = last.dist[lastPos];
+            QMat[lastPos, lastDist, (int)move] += learningRate * difference;
+        }
+
+        public void Lost()
+        {
+            lost = true;
+            DataStore.Store(QMat, "QMat");
         }
 
         public bool HasLost()
