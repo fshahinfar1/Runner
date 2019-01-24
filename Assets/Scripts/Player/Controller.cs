@@ -46,7 +46,7 @@ namespace Player
                 player.VerticalMove(verticalNormal);
             }
             
-            float jumpNormal = Input.GetAxis("Jump");
+            //float jumpNormal = Input.GetAxis("Jump");
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 player.Jump();

@@ -8,8 +8,8 @@ namespace Player
     public class PlayerCharacter : MonoBehaviour, CharacterInput
     {
         public PlayerState state;
-        private Rigidbody rigidbody;
-        private Collider collider;
+        private new Rigidbody rigidbody;
+        private new Collider collider;
 
         public float forwardSpeed = 1.0f;
         public float horizontalSpeed = 1.0f;
@@ -17,7 +17,7 @@ namespace Player
         private bool outOfControl = false;
         private bool ignoreCollision = false;
 
-        private LayerMask layerMast;
+        //private LayerMask layerMask;
 
         private void Awake()
         {
@@ -55,7 +55,12 @@ namespace Player
                 state.SetMode(Mode.Air);
             }
 
-            layerMast = LayerMask.GetMask("Obstacle");
+            //layerMask = LayerMask.GetMask("Obstacle");
+
+            // register to face collision detection
+            FaceCollisionDetector fcd = transform.Find("FaceCollisionDetector")
+                .GetComponent<FaceCollisionDetector>();
+            fcd.Register(FaceHit);
         }
 
         private void FixedUpdate()
@@ -65,13 +70,13 @@ namespace Player
             //rigidbody.velocity = state.GetVelocity();
             if (!outOfControl)
             {
-                if (!ignoreCollision &&
-                    Physics.Raycast(transform.position, Vector3.forward, 0.6f, layerMast))
-                {
-                    Debug.LogError("Out of control!");
-                    outOfControl = true;
-                    return;
-                }
+                //if (!ignoreCollision &&
+                //    Physics.Raycast(transform.position, Vector3.forward, 0.6f, layerMast))
+                //{
+                //    Debug.LogError("Out of control!");
+                //    outOfControl = true;
+                //    return;
+                //}
 
                 float f = Mathf.Max(forwardSpeed - rigidbody.velocity.z, 0);
                 rigidbody.AddRelativeForce(Vector3.forward * f, ForceMode.VelocityChange);
@@ -89,6 +94,16 @@ namespace Player
         {
             state.UpdateCanJump(false);
             state.SetMode(Mode.Air);
+        }
+
+        // Face collision detection
+        private void FaceHit()
+        {
+            if (ignoreCollision)
+                return;
+
+            Debug.LogError("Out of control!");
+            outOfControl = true;
         }
 
         // Character Input Interface
@@ -143,6 +158,7 @@ namespace Player
             return outOfControl;
         }
 
+        // Player Chararcter
         public void Refresh()
         {
             // deactivate collider

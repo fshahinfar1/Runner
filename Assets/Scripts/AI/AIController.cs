@@ -79,7 +79,7 @@ namespace AI {
 
         private void Respond()
         {
-            Debug.Log("AI responds!");
+            //Debug.Log("AI responds!");
 
             // take your hand of the keyboard
             keyboard.SetAction(Moves.Nothing);
