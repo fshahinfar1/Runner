@@ -11,7 +11,8 @@ namespace Player
         private Rigidbody rigidbody;
         private Collider collider;
 
-        public float forwardSpeed = 5.0f;
+        public float forwardSpeed = 1.0f;
+        public float horizontalSpeed = 1.0f;
 
         private bool outOfControl = false;
         private bool ignoreCollision = false;
@@ -102,11 +103,12 @@ namespace Player
                 direction = Vector3.right;
             }
 
-            if (!Physics.Raycast(transform.position, direction, 0.6f, layerMast))
+            if (!Physics.Raycast(transform.position, direction, 0.6f))
             {
                 state.updateHorizontalSpeed(magnitude);
                 //rigidbody.velocity = state.GetVelocity();
-                rigidbody.AddRelativeForce(direction * (10 - Mathf.Abs(rigidbody.velocity.x)), ForceMode.VelocityChange);
+                float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
+                rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
             }
         }
 
