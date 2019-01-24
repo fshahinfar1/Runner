@@ -12,75 +12,48 @@ namespace Stat
         public RoadLooper roadLooper;
         public StatDisplay display;
 
-        //private List<ObstacleStat> obstacles;
-
         private GameStat stat;
 
         private float distThreshold = 0.5f;
         private float distMaxThreshold = 1f;
 
-
-        //private void Awake()
-        //{
-        //    obstacles = new List<ObstacleStat>(GameObject.FindObjectsOfType<ObstacleStat>());
-        //}
+        private int posMax = 10;
 
         private void FixedUpdate()
+        {
+            stat = Extract();
+            if (display != null)
+            {
+                display.Display(stat);
+            }
+        }
+
+        private GameStat Extract()
         {
             GameStat newStat = new GameStat();
 
             Vector3 playerPos = player.transform.position;
 
-            float leftWallDist = -4.5f - playerPos.x;
-            if (-leftWallDist < distMaxThreshold)
-            {
-                newStat.leftDanger = CalcObstDanger(leftWallDist);
-            }
-
-            float rightWallDist = 4.5f - playerPos.x;
-            if (rightWallDist < distMaxThreshold)
-            {
-                newStat.rightDanger = CalcObstDanger(rightWallDist);
-            }
+            newStat.pos = Mathf.FloorToInt(playerPos.x + 5) % posMax;
+            newStat.offset = playerPos.x - (newStat.pos - 4);
+            newStat.dist = new float[posMax];
 
             RoadComponent road = roadLooper.GetRoadByIndex(0); // get current road comming road
             List<Transform> obstacles = road.GetObstacles();
             obstacles.AddRange(roadLooper.GetRoadByIndex(1).GetObstacles()); // check next comming road
             foreach (Transform t in obstacles)
             {
-                ObstacleStat ob = t.GetComponent<ObstacleStat>();
-                if (ob == null)
-                {
-                    Debug.LogError("obstacle stat not found!");
-                    //t.gameObject.SetActive(false);
-                    continue;
-                }
-                Vector3 dist = -ob.DistanceTo(playerPos);
-                float danger = CalcObstDanger(dist.z);
-                if (dist.x > distThreshold && dist.x < distMaxThreshold)
-                {
-                    // right
-                    newStat.rightDanger = Mathf.Max(newStat.rightDanger, danger);
-                }
-                else if (-dist.x > distThreshold && -dist.x < distMaxThreshold)
-                {
-                    // left
-                    newStat.leftDanger = Mathf.Max(newStat.leftDanger, danger);
-                }
-                else if (dist.x < distThreshold && dist.x > -distThreshold)
-                {
-                    // front
-                    newStat.frontDanger = Mathf.Max(newStat.frontDanger, danger);
-                }
-                //Debug.Log("Dist: " + dist);
-                //Debug.Log("Danger: " + danger);
-            }
+                Vector3 dist = t.position - playerPos;
 
-            stat = newStat;
-            if (display != null)
-            {
-                display.Display(newStat);
+                if (dist.z > 0)
+                {
+                    int pos = Mathf.FloorToInt(t.position.x + 5) % posMax;
+
+                    float lastDist = newStat.dist[pos];
+                    newStat.dist[pos] = Mathf.Max(lastDist, dist.z);
+                }
             }
+            return newStat;
         }
 
         public GameStat GetStat()

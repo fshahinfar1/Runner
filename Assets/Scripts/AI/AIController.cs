@@ -15,27 +15,31 @@ namespace AI {
     public class AIController : MonoBehaviour {
 
         private int countMoves = 3;
-
         public float responseDelay = 0.2f; // seconds
         private float timer = 0;
 
         public GameObject player;
         private Player.CharacterInput inputInterface;
-
         public StatExtractor consultor;
-
         public AIKeyboard keyboard;
 
+        // q learning
         private GameStat lastStat;
         private Moves lastMove = Moves.Nothing;
         private float lastMoveValue;
         private float[] lastMoveFeatures;
-
         public float[] weigths;
 
+        // prediction
+        private float[] lastPredictedFeatures;
+        private float[] prePredictionFeatures;
+        private float[][] predictionWeights;
+
+        //q laerning parameters
         public float learningRate = 0.01f;
         public float discount = 0.80f;
         public float epsilon = 0.20f;
+        private int countPrameters = 12;
 
         private bool lost = false;
 
@@ -47,7 +51,12 @@ namespace AI {
                 Debug.LogError("Input interface not found");
             }
 
-            weigths = new float[3] { 0, 0, 0 };
+            weigths = new float[countPrameters];
+            predictionWeights = new float[countMoves][];
+            for (int i = 0; i < countMoves; i++)
+            {
+                predictionWeights[i] = new float[countPrameters];
+            }
 
             // initialize random seed
             Random.InitState((int) System.DateTime.Now.TimeOfDay.Ticks);
@@ -94,11 +103,14 @@ namespace AI {
 
             // choose an action for this situation
             float value;
-            float[] features;
+            float[] features; // f(s, a)
             Moves move = ChooseAction(stat, out value, out features);
 
             // learn from last action
             Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value, lastMoveFeatures);
+
+            // learn how to predict
+            LearnPrediction(FeatureExtractor.Extract(stat), lastMove);
 
             // performe the action
             Act(move);
@@ -106,6 +118,7 @@ namespace AI {
             // remember action so you can evaluate and learn
             lastStat = stat;
             lastMoveValue = value;
+            lastMove = move;
             lastMoveFeatures = features;
 
             // if  Ai lost the game
@@ -117,9 +130,9 @@ namespace AI {
 
         private float QValue(GameStat stat, Moves move, out float[] features)
         {
-            GameStat predictedStat = Predict(stat, (Moves)move);
+            features = Predict(stat, (Moves)move);
             float value = 0;
-            features = FeatureExtractor.Extract(predictedStat);
+            //features = FeatureExtractor.Extract(predictedStat);
             value = Vectors.Dot(features, weigths);
             return value;
         }
@@ -129,6 +142,7 @@ namespace AI {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
 
+            // epsilon greedy
             float chance = Random.Range(0, 1);
             if (chance < epsilon)
             {
@@ -137,6 +151,7 @@ namespace AI {
                 return action;
             }
 
+            // max action
             features = null;
             for (int move=0; move < countMoves; move++)
             {
@@ -161,40 +176,16 @@ namespace AI {
             keyboard.SetAction(move);
         }
 
-        private GameStat Predict(GameStat stat, Moves move)
+        private float[] Predict(GameStat stat, Moves move)
         {
-            // very weak prediction
-            GameStat predict = new GameStat(stat);
-            float zSpeed = predict.zSpeed;
+            float[] f = FeatureExtractor.Extract(stat);
+            float[] f2 = Vectors.ElementWiseProduct(f, predictionWeights[(int)move]);
+            //f = Vectors.Sum(f, predictionBias);
 
-            switch (move)
-            {
-                case Moves.Nothing:
-                    predict.leftDanger += zSpeed * responseDelay;
-                    predict.rightDanger += zSpeed * responseDelay;
-                    predict.frontDanger += zSpeed * responseDelay;
-                    if (predict.frontDanger > 0.5)
-                        predict.lose = true;
-                    predict.points += 1;
-                    break;
-                case Moves.Left:
-                    if (predict.leftDanger < 0.9)
-                    {
-                        predict.frontDanger = predict.leftDanger;
-                        predict.leftDanger *= 0.5f;
-                        predict.points += 1;
-                    }
-                    break;
-                case Moves.Right:
-                    if (predict.rightDanger < 0.9)
-                    {
-                        predict.frontDanger = predict.rightDanger;
-                        predict.rightDanger *= 0.5f;
-                        predict.points += 1;
-                    }
-                    break;
-            }
-            return predict;
+            prePredictionFeatures = f;
+            lastPredictedFeatures = f2;
+
+            return f2;
         }
 
         private float GetReward(GameStat last, GameStat current)
@@ -217,6 +208,18 @@ namespace AI {
             for (int i=0; i < weigths.Length; i++)
             {
                 weigths[i] += learningRate * difference * lastFeatures[i];
+            }
+        }
+
+        private void LearnPrediction(float[] currentFeatures, Moves lastMove)
+        {
+            if (lastPredictedFeatures == null || prePredictionFeatures == null)
+                return;
+
+            for (int i = 0; i < lastPredictedFeatures.Length; i++)
+            {
+                float diff = currentFeatures[i] - lastPredictedFeatures[i];
+                predictionWeights[(int)lastMove][i] += learningRate * diff / prePredictionFeatures[i];
             }
         }
 

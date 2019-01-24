@@ -8,14 +8,19 @@ namespace Stat
     public class StatDisplay : MonoBehaviour
     {
         private GameStat stat;
+        private bool ready=false;
 
         public void Display (GameStat gameStat)
         {
             stat = gameStat;
+            ready = true;
         }
 
         private void OnGUI()
         {
+            if (stat.dist == null || !ready)
+                return;
+
             int w = Screen.width, h = Screen.height;
 
             GUIStyle style = new GUIStyle();
@@ -25,8 +30,8 @@ namespace Stat
             style.alignment = TextAnchor.UpperLeft;
             style.fontSize = h * 5 / 100;
             style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            string text = string.Format("{0:0.0}, {1:0.0}, {2:0.0} ",
-                stat.leftDanger, stat.frontDanger, stat.rightDanger);
+            string text = string.Format("Pos: {0}, Off: {1}, dist: {2} ",
+                stat.pos, stat.offset, stat.dist[stat.pos]);
             GUI.Label(rect, text, style);
         }
     }

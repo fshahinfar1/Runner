@@ -8,8 +8,13 @@ namespace AI
     {
         public static float[] Extract(Stat.GameStat stat)
         {
-            float[] feature = new float[3] 
-            {stat.leftDanger, stat.frontDanger, stat.rightDanger };
+            int idxAfterDist = stat.dist.Length;
+
+            float[] feature = new float[idxAfterDist+2];
+
+            System.Array.Copy(stat.dist, 0, feature, 0, stat.dist.Length);
+            feature[idxAfterDist] = stat.pos;
+            feature[idxAfterDist + 1] = stat.offset;
 
             return feature;
         }

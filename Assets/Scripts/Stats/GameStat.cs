@@ -8,18 +8,18 @@ namespace Stat
     {
         public bool lose;
         public int points;
-        public float frontDanger;
-        public float leftDanger;
-        public float rightDanger;
+        public int pos;
+        public float offset;
+        public float[] dist;
         public float zSpeed;
 
         public GameStat(GameStat s)
         {
             lose = s.lose;
             points = s.points;
-            frontDanger = s.frontDanger;
-            leftDanger = s.leftDanger;
-            rightDanger = s.rightDanger;
+            pos = s.pos;
+            offset = s.offset;
+            dist = s.dist;
             zSpeed = s.zSpeed;
         }
     }
