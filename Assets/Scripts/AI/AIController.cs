@@ -28,7 +28,7 @@ namespace AI {
         private Moves lastMove = Moves.Nothing;
         private float lastMoveValue;
         private float[] lastMoveFeatures;
-        public float[] weigths;
+        public float[] weights;
 
         // prediction
         private float[] lastPredictedFeatures;
@@ -51,11 +51,16 @@ namespace AI {
                 Debug.LogError("Input interface not found");
             }
 
-            weigths = new float[countPrameters];
+            weights = DataStore.Load("Weights");
+            if (weights == null || weights.Length != countPrameters)
+                weights = new float[countPrameters];
+
             predictionWeights = new float[countMoves][];
             for (int i = 0; i < countMoves; i++)
             {
-                predictionWeights[i] = new float[countPrameters];
+                predictionWeights[i] = DataStore.Load(string.Format("PredictionWeights_{0}", i));
+                if (predictionWeights[i] == null || predictionWeights[i].Length != countPrameters)
+                    predictionWeights[i] = new float[countPrameters];
             }
 
             // initialize random seed
@@ -123,9 +128,7 @@ namespace AI {
 
             // if  Ai lost the game
             if (stat.lose)
-                lost = true;
-
-            Debug.Log(string.Format("w: {0}, {1}, {2}", weigths[0], weigths[1], weigths[2]));
+                Lost();
         }
 
         private float QValue(GameStat stat, Moves move, out float[] features)
@@ -133,7 +136,7 @@ namespace AI {
             features = Predict(stat, (Moves)move);
             float value = 0;
             //features = FeatureExtractor.Extract(predictedStat);
-            value = Vectors.Dot(features, weigths);
+            value = Vectors.Dot(features, weights);
             return value;
         }
 
@@ -205,9 +208,9 @@ namespace AI {
 
             float difference = (reward + discount * currentStatePredictedValue) - lastStatePredictedValue;
 
-            for (int i=0; i < weigths.Length; i++)
+            for (int i = 0; i < weights.Length; i++)
             {
-                weigths[i] += learningRate * difference * lastFeatures[i];
+                weights[i] += learningRate * difference * lastFeatures[i];
             }
         }
 
@@ -219,8 +222,17 @@ namespace AI {
             for (int i = 0; i < lastPredictedFeatures.Length; i++)
             {
                 float diff = currentFeatures[i] - lastPredictedFeatures[i];
-                predictionWeights[(int)lastMove][i] += learningRate * diff / prePredictionFeatures[i];
+                predictionWeights[(int)lastMove][i] += learningRate * diff;
             }
+        }
+
+        public void Lost()
+        {
+            lost = true;
+            DataStore.Store(weights, "Weights");
+            DataStore.Store(predictionWeights[0], "PredictionWeights_0");
+            DataStore.Store(predictionWeights[1], "PredictionWeights_1");
+            DataStore.Store(predictionWeights[2], "PredictionWeights_2");
         }
 
         public bool HasLost()

@@ -50,7 +50,7 @@ namespace Stat
                     int pos = Mathf.FloorToInt(t.position.x + 5) % posMax;
 
                     float lastDist = newStat.dist[pos];
-                    newStat.dist[pos] = Mathf.Max(lastDist, dist.z);
+                    newStat.dist[pos] = Mathf.Min(lastDist, Mathf.Clamp(dist.z/20, 0, 1));
                 }
             }
             return newStat;

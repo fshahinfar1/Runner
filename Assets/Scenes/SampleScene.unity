@@ -759,7 +759,7 @@ MonoBehaviour:
   player: {fileID: 2089400141}
   consultor: {fileID: 1599912455}
   keyboard: {fileID: 913062764}
-  weigths: []
+  weights: []
   learningRate: 0.01
   discount: 0.8
   epsilon: 0
@@ -1318,6 +1318,14 @@ PrefabInstance:
     - target: {fileID: 4749312413774536, guid: a761e5e7ef2f719488bd1774b4368e76, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4878010383107032, guid: a761e5e7ef2f719488bd1774b4368e76, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4878010383107032, guid: a761e5e7ef2f719488bd1774b4368e76, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1170814570, guid: a761e5e7ef2f719488bd1774b4368e76, type: 3}
