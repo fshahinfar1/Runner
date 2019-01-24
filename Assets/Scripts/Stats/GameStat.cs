@@ -8,19 +8,25 @@ namespace Stat
     {
         public bool lose;
         public int points;
-        public float frontDanger;
-        public float leftDanger;
-        public float rightDanger;
+        public int pos;
+        public int[] dist; // [0, 4]
         public float zSpeed;
+        public bool canLeft;
+        public bool canRight;
 
         public GameStat(GameStat s)
         {
             lose = s.lose;
             points = s.points;
-            frontDanger = s.frontDanger;
-            leftDanger = s.leftDanger;
-            rightDanger = s.rightDanger;
+            pos = s.pos;
+
+            int length = s.dist.Length;
+            dist = new int[length];
+            System.Array.Copy(s.dist, dist, length);
+
             zSpeed = s.zSpeed;
+            canLeft = s.canLeft;
+            canRight = s.canRight;
         }
     }
 }
