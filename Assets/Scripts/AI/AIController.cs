@@ -27,11 +27,11 @@ namespace AI {
         private Moves lastMove = Moves.Nothing;
         private float lastMoveValue;
 
-        private float[] weigths;
+        public float[] weigths;
 
-        private float learningRate = 0.01f;
-        private float discount = 0.80f;
-        private float epsilon = 0.20f;
+        public float learningRate = 0.01f;
+        public float discount = 0.80f;
+        public float epsilon = 0.20f;
 
         private bool lost = false;
 
