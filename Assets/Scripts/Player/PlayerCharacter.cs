@@ -122,10 +122,13 @@ namespace Player
 
             if (!Physics.Raycast(transform.position, direction, 0.6f))
             {
-                state.updateHorizontalSpeed(magnitude);
-                //rigidbody.velocity = state.GetVelocity();
-                float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
-                rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
+                //state.updateHorizontalSpeed(magnitude);
+                ////rigidbody.velocity = state.GetVelocity();
+                //float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
+                //rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
+
+                Vector3 pos = transform.position + direction;
+                rigidbody.MovePosition(pos);
             }
         }
 

@@ -162,7 +162,16 @@ namespace AI {
 
         private void Act(Moves move)
         {
-            keyboard.SetAction(move);
+            //keyboard.SetAction(move);
+            switch (move)
+            {
+                case Moves.Left:
+                    inputInterface.HorizontalMove(-1);
+                    break;
+                case Moves.Right:
+                    inputInterface.HorizontalMove(1);
+                    break;
+            }
         }
 
         private float GetReward(GameStat last, GameStat current)
