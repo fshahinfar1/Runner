@@ -145,7 +145,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 120508478}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 17}
+  m_LocalPosition: {x: 0, y: 5, z: 17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -666,13 +666,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 735a70647019e7a489c5ee0015039000, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  responseDelay: 0.2
   player: {fileID: 2089400141}
   consultor: {fileID: 1599912455}
   keyboard: {fileID: 913062764}
   weigths: []
   learningRate: 0.01
   discount: 0.8
-  epsilon: 0.05
+  epsilon: 0
 --- !u!4 &913062763
 Transform:
   m_ObjectHideFlags: 0

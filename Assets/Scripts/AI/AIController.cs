@@ -16,7 +16,7 @@ namespace AI {
 
         private int countMoves = 3;
 
-        private float responseDelay = 0.3f; // seconds
+        public float responseDelay = 0.2f; // seconds
         private float timer = 0;
 
         public GameObject player;
