@@ -4,15 +4,16 @@ using UnityEngine;
 using Stat;
 
 namespace AI {
+    public enum Moves
+    {
+        Nothing,
+        Left,
+        Right,
+        //Jump,
+    }
+
     public class AIController : MonoBehaviour {
 
-        private enum Moves
-        {
-            Nothing,
-            Left,
-            Right,
-            //Jump,
-        }
         private int countMoves = 3;
 
         private float responseDelay = 0.3f; // seconds
@@ -22,6 +23,8 @@ namespace AI {
         private Player.CharacterInput inputInterface;
 
         public StatExtractor consultor;
+
+        public AIKeyboard keyboard;
 
         private GameStat lastStat;
         private Moves lastMove = Moves.Nothing;
@@ -38,10 +41,25 @@ namespace AI {
         private void Awake()
         {
             inputInterface = player.GetComponent<Player.PlayerCharacter>();
+            if (inputInterface == null)
+            {
+                Debug.LogError("Input interface not found");
+            }
+
             weigths = new float[3] { 0, 0, 0 };
 
             // initialize random seed
             Random.InitState((int) System.DateTime.Now.TimeOfDay.Ticks);
+
+            if (keyboard != null)
+            {
+                keyboard.SetInputInterface(inputInterface);
+                keyboard.SetAction(Moves.Nothing);
+            }
+            else
+            {
+                Debug.LogError("Ai keyboard not found!");
+            }
         }
 
         private void Update()
@@ -62,6 +80,9 @@ namespace AI {
         private void Respond()
         {
             Debug.Log("AI responds!");
+
+            // take your hand of the keyboard
+            keyboard.SetAction(Moves.Nothing);
 
             // get the current state
             GameStat stat = consultor.GetStat();
@@ -127,18 +148,7 @@ namespace AI {
 
         private void Act(Moves move)
         {
-            switch (move)
-            {
-                case Moves.Left:
-                    inputInterface.HorizontalMove(-1);
-                    break;
-                case Moves.Right:
-                    inputInterface.HorizontalMove(1);
-                    break;
-                //case Moves.Jump:
-                //    inputInterface.Jump();
-                //    break;
-            }
+            keyboard.SetAction(move);
         }
 
         private GameStat Predict(GameStat stat, Moves move)
