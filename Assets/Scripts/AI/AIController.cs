@@ -29,6 +29,7 @@ namespace AI {
         private GameStat lastStat;
         private Moves lastMove = Moves.Nothing;
         private float lastMoveValue;
+        private float[] lastMoveFeatures;
 
         public float[] weigths;
 
@@ -93,10 +94,11 @@ namespace AI {
 
             // choose an action for this situation
             float value;
-            Moves move = ChooseAction(stat, out value);
+            float[] features;
+            Moves move = ChooseAction(stat, out value, out features);
 
             // learn from last action
-            Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value);
+            Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value, lastMoveFeatures);
 
             // performe the action
             Act(move);
@@ -104,22 +106,25 @@ namespace AI {
             // remember action so you can evaluate and learn
             lastStat = stat;
             lastMoveValue = value;
+            lastMoveFeatures = features;
 
             // if  Ai lost the game
             if (stat.lose)
                 lost = true;
+
+            Debug.Log(string.Format("w: {0}, {1}, {2}", weigths[0], weigths[1], weigths[2]));
         }
 
-        private float QValue(GameStat stat, Moves move)
+        private float QValue(GameStat stat, Moves move, out float[] features)
         {
             GameStat predictedStat = Predict(stat, (Moves)move);
             float value = 0;
-            float[] features = FeatureExtractor.Extract(predictedStat);
+            features = FeatureExtractor.Extract(predictedStat);
             value = Vectors.Dot(features, weigths);
             return value;
         }
 
-        private Moves ChooseAction(GameStat stat, out float value)
+        private Moves ChooseAction(GameStat stat, out float value, out float[] features)
         {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
@@ -128,19 +133,24 @@ namespace AI {
             if (chance < epsilon)
             {
                 action = (Moves)Mathf.Floor(Random.Range(0, countMoves + 0.99f));
-                value = QValue(stat, action);
+                value = QValue(stat, action, out features);
                 return action;
             }
-            
+
+            features = null;
             for (int move=0; move < countMoves; move++)
             {
-                float qValue = QValue(stat, (Moves)move);   
+                float[] feats;
+                float qValue = QValue(stat, (Moves)move, out feats);   
                 if (qValue > maxVal)
                 {
                     maxVal = qValue;
                     action = (Moves)move;
+                    features = feats;
                 }
             }
+            Debug.Log("Action: " + action.ToString());
+            Debug.Log("Value: " + maxVal);
 
             value = maxVal;
             return action;
@@ -168,12 +178,20 @@ namespace AI {
                     predict.points += 1;
                     break;
                 case Moves.Left:
-                    predict.frontDanger = predict.leftDanger;
-                    predict.points += 1;
+                    if (predict.leftDanger < 0.9)
+                    {
+                        predict.frontDanger = predict.leftDanger;
+                        predict.leftDanger *= 0.5f;
+                        predict.points += 1;
+                    }
                     break;
                 case Moves.Right:
-                    predict.frontDanger = predict.rightDanger;
-                    predict.points += 1;
+                    if (predict.rightDanger < 0.9)
+                    {
+                        predict.frontDanger = predict.rightDanger;
+                        predict.rightDanger *= 0.5f;
+                        predict.points += 1;
+                    }
                     break;
             }
             return predict;
@@ -188,13 +206,17 @@ namespace AI {
             return 0;
         }
 
-        private void Feedback(float reward, float lastStatePredictedValue, GameStat last, Moves move, GameStat current, float currentStatePredictedValue)
+        private void Feedback(float reward, float lastStatePredictedValue, GameStat last,
+            Moves move, GameStat current, float currentStatePredictedValue, float[] lastFeatures)
         {
-            float difference = (reward + currentStatePredictedValue) - lastStatePredictedValue;
+            if (lastFeatures == null)
+                return;
+
+            float difference = (reward + discount * currentStatePredictedValue) - lastStatePredictedValue;
 
             for (int i=0; i < weigths.Length; i++)
             {
-                weigths[i] += learningRate * discount * difference;
+                weigths[i] += learningRate * difference * lastFeatures[i];
             }
         }
 

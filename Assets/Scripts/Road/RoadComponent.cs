@@ -38,7 +38,8 @@ public class RoadComponent : MonoBehaviour {
         List<Transform> result = new List<Transform>(obstacles.childCount);
         foreach (Transform obs in obstacles)
         {
-            result.Add(obs);
+            if (obs.gameObject.activeSelf)
+                result.Add(obs);
         }
         return result;
     }

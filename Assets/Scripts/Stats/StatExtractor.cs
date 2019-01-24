@@ -61,6 +61,17 @@ namespace Stat
                 //Debug.Log("Danger: " + danger);
             }
 
+            if (playerPos.x <= -4.49)
+            {
+                // can't move left
+                newStat.leftDanger = 1;
+            }
+            else if (playerPos.x >= 4.49)
+            {
+                // can't move right
+                newStat.rightDanger = 1;
+            }
+
             stat = newStat;
             if (display != null)
             {
