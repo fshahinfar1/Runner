@@ -16,8 +16,8 @@ namespace Stat
 
         private GameStat stat;
 
-        private float distThreshold = 0.6f;
-        private float distMaxThreshold = 1.9f;
+        private float distThreshold = 0.5f;
+        private float distMaxThreshold = 1f;
 
 
         //private void Awake()

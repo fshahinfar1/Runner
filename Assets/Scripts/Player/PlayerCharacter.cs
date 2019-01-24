@@ -10,6 +10,7 @@ namespace Player
         public PlayerState state;
         private new Rigidbody rigidbody;
         private new Collider collider;
+        private Material material;
 
         public float forwardSpeed = 1.0f;
         public float horizontalSpeed = 1.0f;
@@ -24,6 +25,7 @@ namespace Player
             state = new PlayerState();
             rigidbody = GetComponent<Rigidbody>();
             collider = GetComponent<Collider>();
+            material =  GetComponent<Renderer>().material;
 
             if (collider == null)
             {
@@ -166,12 +168,19 @@ namespace Player
             int obstacleLayer = LayerMask.NameToLayer("Obstacle");
             ignoreCollision = true;
             Physics.IgnoreLayerCollision(playerLayer, obstacleLayer);
+            Color c = material.GetColor("_Color");
+            c.a = 0.1f;
+            c.b = 0.5f;
+            material.SetColor("_Color", c);
+            c.a = 1;
+            c.b = 0;
             
             // after one second set collider 
             DelayCall.Call(this, () => {
                 Debug.Log("Set collision active");
                 ignoreCollision = false;
                 Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
+                material.SetColor("_Color", c);
             }, 2.0f);
 
             outOfControl = false;
