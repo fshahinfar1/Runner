@@ -53,7 +53,7 @@ namespace AI {
             if (QMat == null)
             {
                 Debug.LogWarning("Coudln't load QMat!");
-                QMat = new float[10, 2, 5, countMoves, 2];
+                QMat = new float[10, 2, 5, countMoves, 3];
             }
 
             // initialize random seed
@@ -132,6 +132,8 @@ namespace AI {
         {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
+
+            Debug.Log("type: " + stat.obstacleType[stat.pos].ToString());
 
             float chance = Random.Range(0, 1);
             if (chance < epsilon)

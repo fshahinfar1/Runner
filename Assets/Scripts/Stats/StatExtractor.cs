@@ -45,9 +45,12 @@ namespace Stat
             GameStat newStat = new GameStat();
             newStat.dist = new int[posMax];
             newStat.obstacleType = new ObstType[posMax];
+            float[] minDist = new float[posMax];
             for (int i = 0; i < posMax; i++)
             {
-                newStat.dist[i] = distMax - 1;
+                newStat.dist[i] = distMax-1;
+                newStat.obstacleType[i] = ObstType.None;
+                minDist[i] = float.MaxValue;
             }
 
             Vector3 playerPos = player.transform.position;
@@ -68,12 +71,14 @@ namespace Stat
 
                 if (dist.z > 0)
                 {
-                    int lastDist = newStat.dist[pos];
+                    // int lastDist = newStat.dist[pos];
                     int intDist = GetDist(dist.z);
-                    if (intDist < lastDist)
+                    if (dist.z < minDist[pos])
                     {
+                        minDist[pos] = dist.z;
                         newStat.dist[pos] = intDist;
                         newStat.obstacleType[pos] = obsStat.GetObsType();
+                        obsStat.SetText(pos.ToString());
                     }
                 }
             }
@@ -83,7 +88,7 @@ namespace Stat
 
         private int GetPos(float x)
         {
-            float tmp = x + 5;
+            float tmp = x + 5f;
             return Mathf.FloorToInt(tmp);
         }
 
