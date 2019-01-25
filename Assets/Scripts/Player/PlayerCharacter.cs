@@ -177,14 +177,16 @@ namespace Player
             material.SetColor("_Color", c);
             c.a = 1;
             c.b = 0;
-            
+
+
+            float delayTime = 2 / forwardSpeed;
             // after one second set collider 
             DelayCall.Call(this, () => {
                 Debug.Log("Set collision active");
                 ignoreCollision = false;
                 Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
                 material.SetColor("_Color", c);
-            }, 2.0f);
+            }, delayTime);
 
             outOfControl = false;
         }
