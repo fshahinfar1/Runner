@@ -61,6 +61,7 @@ namespace Stat
             foreach (Transform obs in obstacles)
             {
                 int pos = GetPos(obs.position.x);
+                ObstacleStat obsStat = obs.GetComponent<ObstacleStat>();
 
                 Vector3 dist = obs.position - playerPos;
 
@@ -69,7 +70,10 @@ namespace Stat
                     int lastDist = newStat.dist[pos];
                     int intDist = GetDist(dist.z);
                     if (intDist < lastDist)
-                        newStat.dist[pos] = intDist; 
+                    {
+                        newStat.dist[pos] = intDist;
+                        newStat.obstacleType[pos] = obsStat.GetType();
+                    }
                 }
             }
 
