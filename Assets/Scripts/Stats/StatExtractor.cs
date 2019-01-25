@@ -16,6 +16,7 @@ namespace Stat
         private GameStat stat;
 
         private int posMax = 10;
+        private int heightMax = 2;
         private int distMax = 5;
 
         private void Awake()
@@ -51,6 +52,7 @@ namespace Stat
             Vector3 playerPos = player.transform.position;
 
             newStat.pos = GetPos(playerPos.x);
+            newStat.height = GetHeight(playerPos.y);
             newStat.zSpeed = playerRigidbody.velocity.z;
 
             List<Transform> obstacles = roadLooper.GetRoadByIndex(0).GetObstacles();
@@ -77,12 +79,17 @@ namespace Stat
         private int GetPos(float x)
         {
             float tmp = x + 5;
-            return Mathf.FloorToInt(tmp) % posMax;
+            return Mathf.FloorToInt(tmp);
+        }
+
+        private int GetHeight(float y)
+        {
+            return Mathf.Clamp(Mathf.FloorToInt(y), 0, 1);
         }
 
         private int GetDist(float z)
         {
-            return Mathf.FloorToInt(z) % distMax;
+            return Mathf.Clamp(Mathf.FloorToInt(z), 0 , distMax-1);
         }
 
         public GameStat GetStat()

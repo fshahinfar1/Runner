@@ -9,6 +9,7 @@ namespace Stat
         public bool lose;
         public int points;
         public int pos;
+        public int height;
         public int[] dist; // [0, 4]
         public float zSpeed;
         public bool canLeft;
@@ -19,6 +20,7 @@ namespace Stat
             lose = s.lose;
             points = s.points;
             pos = s.pos;
+            height = s.height;
 
             int length = s.dist.Length;
             dist = new int[length];
