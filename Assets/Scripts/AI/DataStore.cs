@@ -99,11 +99,11 @@ namespace AI
             while ((line = tr.ReadLine()) != null)
             {
                 string[] tmp = line.Split(',');
-                for (int i=0; i<l3-1; i++)
+                for (int i=0; i<l4-1; i++)
                 {
                     result[pos, height, dist, i] = float.Parse(tmp[i]);
                 }
-                int lastIndex = l3 - 1;
+                int lastIndex = l4 - 1;
                 int lastCharIdx = tmp[lastIndex].Length - 1;
                 if (tmp[lastIndex][lastCharIdx] == '*')
                 {
