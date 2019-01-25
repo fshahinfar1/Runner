@@ -25,6 +25,7 @@ namespace AI {
         public StatExtractor consultor;
 
         public AIKeyboard keyboard;
+        public StateMoveValueDisplay display;
 
         private GameStat lastStat;
         private Moves lastMove = Moves.Nothing;
@@ -38,6 +39,10 @@ namespace AI {
 
         //[pos, height, dist, move, obsType]
         private float[,,,,] QMat;
+
+        // temp
+        float[] qvalues;
+
 
         private void Awake()
         {
@@ -68,6 +73,9 @@ namespace AI {
             {
                 Debug.LogError("Ai keyboard not found!");
             }
+
+            //temps
+            qvalues = new float[countMoves];
         }
 
         private void Update()
@@ -140,8 +148,13 @@ namespace AI {
             {
                 action = (Moves)Mathf.FloorToInt(Random.Range(0, countMoves));
                 value = QValue(stat, action);
+
+                qvalues[(int)action] = value;
+                display.Set(qvalues);
+
                 return action;
             }
+
 
             for (int move=0; move < countMoves; move++)
             {
@@ -158,9 +171,12 @@ namespace AI {
                     maxVal = qValue;
                     action = m;
                 }
+
+                qvalues[move] = qValue;
             }
             Debug.Log("Action: " + action.ToString());
             Debug.Log("Value: " + maxVal);
+            display.Set(qvalues);
 
             value = maxVal;
             return action;
