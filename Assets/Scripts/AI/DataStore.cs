@@ -7,11 +7,12 @@ namespace AI
 {
     public class DataStore
     {
-        static int l1 = 10;
-        static int l2 = 5;
-        static int l3 = 3;
+        static int l1 = 10; // pos
+        static int l2 = 2;  // height
+        static int l3 = 5;  // dist
+        static int l4 = 4;  // moves
 
-        public static void Store(float [,,] mat, string name)
+        public static void Store(float [,,,] mat, string name)
         {
             
 
@@ -28,8 +29,12 @@ namespace AI
              * .
              * .
              * .
+             * . . .;$*
+             * .
+             * .
+             * .
              */
-            int size = l1 * ((l2 * ((l3 * 2) + 1)) + 1); 
+            int size = l1 * (l2 * ((l3 * ((l4 * 2) + 1)) + 1) + 1); 
             System.Text.StringBuilder builder = new System.Text.StringBuilder(size);
             for (int i=0; i<l1; i++)
             {
@@ -37,18 +42,29 @@ namespace AI
                 {
                     for (int k=0; k<l3; k++)
                     {
-                        if (k == l3-1)
+                        for (int x = 0; x < l4; x++)
                         {
-                            builder.AppendFormat("{0};", mat[i, j, k]);
+                            if (x == l4 - 1)
+                            {
+                                builder.AppendFormat("{0};", mat[i, j, k, x]);
+                            }
+                            else
+                            {
+                                builder.AppendFormat("{0},", mat[i, j, k, x]);
+                            }
+                        }
+                        if (k == l3 - 1)
+                        {
+                            builder.Append("$");
                         }
                         else
                         {
-                            builder.AppendFormat("{0},", mat[i, j, k]);
+                            builder.Append("\n");
                         }
                     }
-                    if (j == l2-1)
+                    if (j == l2 - 1)
                     {
-                        builder.Append("$\n");
+                        builder.Append("*\n");
                     }
                     else
                     {
@@ -63,9 +79,9 @@ namespace AI
             tw.Close();
         }
 
-        public static float[,,] Load(string name)
+        public static float[,,,] Load(string name)
         {
-            float[,,] result = new float[l1, l2, l3];
+            float[,,,] result = new float[l1, l2, l3, l4];
 
             string path = Application.persistentDataPath + "/" + name + ".txt";
 
@@ -78,27 +94,37 @@ namespace AI
 
             string line;
             int pos = 0;
+            int height = 0;
             int dist = 0;
             while ((line = tr.ReadLine()) != null)
             {
                 string[] tmp = line.Split(',');
                 for (int i=0; i<l3-1; i++)
                 {
-                    result[pos, dist, i] = float.Parse(tmp[i]);
+                    result[pos, height, dist, i] = float.Parse(tmp[i]);
                 }
                 int lastIndex = l3 - 1;
                 int lastCharIdx = tmp[lastIndex].Length - 1;
-                if (tmp[lastIndex][lastCharIdx] == '$')
+                if (tmp[lastIndex][lastCharIdx] == '*')
                 {
-                    lastCharIdx--;
-                    result[pos, dist, lastIndex] =
+                    lastCharIdx-=2;
+                    result[pos, height, dist, lastIndex] =
                         float.Parse(tmp[lastIndex].Substring(0, lastCharIdx));
                     dist = 0;
+                    height = 0;
                     pos++;
+                }
+                else if (tmp[lastIndex][lastCharIdx] == '$')
+                {
+                    lastCharIdx--;
+                    result[pos, height, dist, lastIndex] =
+                        float.Parse(tmp[lastIndex].Substring(0, lastCharIdx));
+                    dist = 0;
+                    height++;
                 }
                 else if (tmp[lastIndex][lastCharIdx] == ';')
                 {
-                    result[pos, dist, lastIndex] =
+                    result[pos, height, dist, lastIndex] =
                         float.Parse(tmp[lastIndex].Substring(0, lastCharIdx));
                     dist++;
                 }

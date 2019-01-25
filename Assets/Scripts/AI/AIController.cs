@@ -9,12 +9,12 @@ namespace AI {
         Nothing,
         Left,
         Right,
-        //Jump,
+        Jump,
     }
 
     public class AIController : MonoBehaviour {
 
-        private int countMoves = 3;
+        private int countMoves = 4;
 
         public float responseDelay = 0.2f; // seconds
         private float timer = 0;
@@ -36,7 +36,7 @@ namespace AI {
 
         private bool lost = false;
 
-        private float[,,] QMat;
+        private float[,,,] QMat;
 
         private void Awake()
         {
@@ -52,7 +52,7 @@ namespace AI {
             if (QMat == null)
             {
                 Debug.LogWarning("Coudln't load QMat!");
-                QMat = new float[10, 5, 3];
+                QMat = new float[10, 2, 5, countMoves];
             }
 
             // initialize random seed
@@ -121,7 +121,9 @@ namespace AI {
         private float QValue(GameStat stat, Moves move)
         {
             int pos = stat.pos;
-            return QMat[pos, stat.dist[pos], (int)move];
+            int height = stat.height;
+            Debug.Log(move);
+            return QMat[pos, height, stat.dist[pos], (int)move];
         }
 
         private Moves ChooseAction(GameStat stat, out float value)
@@ -132,7 +134,7 @@ namespace AI {
             float chance = Random.Range(0, 1);
             if (chance < epsilon)
             {
-                action = (Moves)Mathf.Floor(Random.Range(0, countMoves));
+                action = (Moves)Mathf.FloorToInt(Random.Range(0, countMoves));
                 value = QValue(stat, action);
                 return action;
             }
@@ -171,6 +173,9 @@ namespace AI {
                 case Moves.Right:
                     inputInterface.HorizontalMove(1);
                     break;
+                case Moves.Jump:
+                    inputInterface.Jump();
+                    break;
             }
         }
 
@@ -184,7 +189,7 @@ namespace AI {
         }
 
         private void Feedback(float reward, float lastStatePredictedValue, GameStat last,
-            Moves move, GameStat current, float currentStatePredictedValue)
+            Moves lastMove, GameStat current, float currentStatePredictedValue)
         {
             if (last.dist == null)
                 return;
@@ -194,7 +199,8 @@ namespace AI {
 
             int lastPos = last.pos;
             int lastDist = last.dist[lastPos];
-            QMat[lastPos, lastDist, (int)move] += learningRate * difference;
+            int lastHeight = last.height;
+            QMat[lastPos, lastHeight, lastDist, (int)lastMove] += learningRate * difference;
         }
 
         public void Lost()

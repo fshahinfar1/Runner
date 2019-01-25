@@ -869,7 +869,6 @@ GameObject:
   - component: {fileID: 4730200199091454}
   - component: {fileID: 33564730592916704}
   - component: {fileID: 23362621489058998}
-  - component: {fileID: 1761951602}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Ground
@@ -936,20 +935,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &1761951602
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1415638255710598}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1426786088084966
 GameObject:
   m_ObjectHideFlags: 0
