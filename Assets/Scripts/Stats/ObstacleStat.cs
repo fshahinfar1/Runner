@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace Stat
 {
@@ -8,6 +9,7 @@ namespace Stat
     {
         cube,
         Tall,
+        None,
     }
 
     public class ObstacleStat : MonoBehaviour
@@ -25,6 +27,15 @@ namespace Stat
         public ObstType GetObsType()
         {
             return type;
+        }
+
+        public void SetText(string text)
+        {
+            Transform t = transform.Find("Text");
+            if (t != null)
+            {
+                t.GetComponent<TextMeshPro>().SetText(text);
+            }
         }
     }
 }
