@@ -18,7 +18,7 @@ namespace Player
         private bool outOfControl = false;
         private bool ignoreCollision = false;
 
-        //private LayerMask layerMask;
+        private LayerMask layerMask;
 
         private void Awake()
         {
@@ -57,7 +57,7 @@ namespace Player
                 state.SetMode(Mode.Air);
             }
 
-            //layerMask = LayerMask.GetMask("Obstacle");
+            layerMask = LayerMask.GetMask(new string[]{"Obstacle", "Default"});
 
             // register to face collision detection
             FaceCollisionDetector fcd = transform.Find("FaceCollisionDetector")
@@ -148,13 +148,15 @@ namespace Player
             if (outOfControl)
                 return;
 
-            if (state.CanJump())
+            if (Physics.Raycast(transform.position, Vector3.down, 0.6f, layerMask))
             {
+                Debug.LogError("JUMP!");
                 state.Jump();
                 state.UpdateCanJump(false);
                 state.SetMode(Mode.Air);
 
-                rigidbody.velocity = state.GetVelocity();
+                //rigidbody.velocity = state.GetVelocity();
+                rigidbody.AddRelativeForce(Vector3.up * 5, ForceMode.Impulse);
             }
         }
 
