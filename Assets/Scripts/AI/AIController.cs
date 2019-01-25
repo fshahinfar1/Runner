@@ -229,6 +229,12 @@ namespace AI {
         {
             lost = true;
             DataStore.Store(QMat, "QMat");
+
+            string path = Application.persistentDataPath + "/death.txt";
+            System.IO.TextWriter tw = new System.IO.StreamWriter(path, true);
+            tw.Write(string.Format("{0}\n", System.DateTime.Now.ToString()));
+            tw.Flush();
+            tw.Close();
         }
 
         public bool HasLost()
