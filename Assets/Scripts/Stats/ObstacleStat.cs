@@ -22,7 +22,7 @@ namespace Stat
             return (pos - obPos);
         }
 
-        public ObstType GetType()
+        public ObstType GetObsType()
         {
             return type;
         }

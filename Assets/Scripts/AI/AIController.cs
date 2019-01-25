@@ -36,7 +36,8 @@ namespace AI {
 
         private bool lost = false;
 
-        private float[,,,] QMat;
+        //[pos, height, dist, move, obsType]
+        private float[,,,,] QMat;
 
         private void Awake()
         {
@@ -52,7 +53,7 @@ namespace AI {
             if (QMat == null)
             {
                 Debug.LogWarning("Coudln't load QMat!");
-                QMat = new float[10, 2, 5, countMoves];
+                QMat = new float[10, 2, 5, countMoves, 2];
             }
 
             // initialize random seed
@@ -122,8 +123,9 @@ namespace AI {
         {
             int pos = stat.pos;
             int height = stat.height;
-            Debug.Log(move);
-            return QMat[pos, height, stat.dist[pos], (int)move];
+            int dist = stat.dist[pos];
+            int obsType = (int)stat.obstacleType[pos];
+            return QMat[pos, height, dist, (int)move, obsType];
         }
 
         private Moves ChooseAction(GameStat stat, out float value)
@@ -200,7 +202,9 @@ namespace AI {
             int lastPos = last.pos;
             int lastDist = last.dist[lastPos];
             int lastHeight = last.height;
-            QMat[lastPos, lastHeight, lastDist, (int)lastMove] += learningRate * difference;
+            int lastObsType = (int)last.obstacleType[lastPos];
+            QMat[lastPos, lastHeight, lastDist, (int)lastMove, lastObsType] 
+                += learningRate * difference;
         }
 
         public void Lost()
