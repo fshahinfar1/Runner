@@ -25,11 +25,19 @@ public class FaceCollisionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Obstacle" && transform.position.y - other.transform.position.y < 0.9f)
+        if (other.gameObject.tag == "Obstacle")
         {
-            if (collideAction != null)
+            Vector3 dist = other.transform.position - transform.position;
+            Debug.Log(dist.x);
+            Debug.Log(dist.y);
+            Debug.Log(dist.z);
+
+            if (dist.z < 0.91f && dist.z > 0.0f && dist.y > -0.91f)
             {
-                collideAction.Invoke();
+                if (collideAction != null)
+                {
+                    collideAction.Invoke();
+                }
             }
         }
     }
