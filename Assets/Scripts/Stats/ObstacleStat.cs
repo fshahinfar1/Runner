@@ -10,6 +10,7 @@ namespace Stat
         cube,
         Tall,
         None,
+        Coin,
     }
 
     public class ObstacleStat : MonoBehaviour
