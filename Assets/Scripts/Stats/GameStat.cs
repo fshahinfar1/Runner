@@ -15,6 +15,7 @@ namespace Stat
         public float zSpeed;
         public bool canLeft;
         public bool canRight;
+        public int coins;
 
         public GameStat(GameStat s)
         {
@@ -34,6 +35,7 @@ namespace Stat
             zSpeed = s.zSpeed;
             canLeft = s.canLeft;
             canRight = s.canRight;
+            coins = s.coins;
         }
     }
 }

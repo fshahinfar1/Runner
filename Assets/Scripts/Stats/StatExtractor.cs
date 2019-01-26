@@ -19,6 +19,8 @@ namespace Stat
         private int heightMax = 2;
         private int distMax = 5;
 
+        private int coins = 0;
+
         private void Awake()
         {
             if (player != null)
@@ -29,6 +31,7 @@ namespace Stat
             {
                 Debug.LogError("Player is null!");
             }
+            Observer.GetInstance().Register(Observer.Event.CoinCollection, OnCoinCollect);
         }
 
         private void FixedUpdate()
@@ -38,6 +41,11 @@ namespace Stat
             {
                 display.Display(stat);
             }
+        }
+
+        private void OnCoinCollect()
+        {
+            coins++;
         }
 
         private GameStat Extract()
@@ -82,6 +90,9 @@ namespace Stat
                     }
                 }
             }
+
+            newStat.coins = coins;
+            coins = 0;
 
             return newStat;
         }
