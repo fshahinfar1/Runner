@@ -7,9 +7,18 @@ public class RoadComponent : MonoBehaviour {
     private RoadType type;
     public RoadType roadType;
 
+    private List<GameObject> coins;
+
     private void Awake()
     {
         type = roadType;
+
+        Transform tmp = transform.Find("Coins");
+        coins = new List<GameObject>(tmp.childCount);
+        foreach(Transform t in tmp)
+        {
+            coins.Add(t.gameObject);
+        }
     }
 
     public RoadType GetRoadType()
@@ -42,5 +51,14 @@ public class RoadComponent : MonoBehaviour {
                 result.Add(obs);
         }
         return result;
+    }
+
+    public void Place()
+    {
+        SetActive(true);
+        foreach(GameObject g in coins)
+        {
+            g.SetActive(true);
+        }
     }
 }
