@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 329105651925510754}
   - component: {fileID: 329105651925510755}
   - component: {fileID: 329105651925510752}
-  - component: {fileID: 4149912816775336882}
+  - component: {fileID: 5865196169126671768}
   m_Layer: 10
   m_Name: TallObstacle
   m_TagString: Obstacle
@@ -93,7 +93,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4149912816775336882
+--- !u!114 &5865196169126671768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 329105651925510766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aadaf752e84a8942980bea9373ca0dd, type: 3}
+  m_Script: {fileID: 11500000, guid: 31aec4a2bc65479428a181bdc24d0fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
