@@ -25,7 +25,7 @@ public class FaceCollisionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Obstacle" && other.transform.position.y >= transform.position.y)
+        if (other.gameObject.tag == "Obstacle" && transform.position.y - other.transform.position.y < 0.9f)
         {
             if (collideAction != null)
             {
