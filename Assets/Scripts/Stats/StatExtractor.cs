@@ -107,7 +107,6 @@ namespace Stat
             }
 
             newStat.coins = coins;
-            coins = 0;
 
             return newStat;
         }
@@ -130,6 +129,7 @@ namespace Stat
 
         public GameStat GetStat()
         {
+            coins = 0;
             return stat;
         }
 

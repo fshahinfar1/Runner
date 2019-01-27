@@ -208,7 +208,7 @@ namespace AI {
             {
                 return -5; // lose
             }
-            return 0;
+            return current.coins;
         }
 
         private void Feedback(float reward, float lastStatePredictedValue, GameStat last,
