@@ -150,7 +150,6 @@ namespace Player
 
             if (Physics.Raycast(transform.position, Vector3.down, 0.6f, layerMask))
             {
-                Debug.LogError("JUMP!");
                 state.Jump();
                 state.UpdateCanJump(false);
                 state.SetMode(Mode.Air);

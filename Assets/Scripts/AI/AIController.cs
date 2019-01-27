@@ -122,6 +122,9 @@ namespace AI {
             lastMove = move;
             lastMoveValue = value;
 
+            // display
+            display.SetReward(reward);
+
             // if  Ai lost the game
             if (stat.lose)
                 Lost();
