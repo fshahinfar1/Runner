@@ -146,8 +146,8 @@ namespace AI {
 
             Debug.Log("type: " + stat.obstacleType[stat.pos].ToString());
 
-            float chance = Random.Range(0, 1);
-            if (chance < epsilon)
+            float chance = Random.Range(0, 100);
+            if (chance < epsilon * 100)
             {
                 action = (Moves)Mathf.FloorToInt(Random.Range(0, countMoves));
                 value = QValue(stat, action);
