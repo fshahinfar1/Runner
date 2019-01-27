@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stat
 {
-    public struct GameStat
+    public class GameStat
     {
         public bool lose;
         public int points;
@@ -17,20 +17,42 @@ namespace Stat
         public bool canRight;
         public int coins;
 
-        public GameStat(GameStat s)
+        public GameStat()
+        {
+            lose = false;
+            points = 0;
+            pos = 0;
+            height = 0;
+            dist = null;
+            obstacleType = null;
+            zSpeed = 0;
+            canLeft = false;
+            canRight = false;
+            coins = 0;
+        }
+
+        public GameStat(GameStat s, bool deep = false)
         {
             lose = s.lose;
             points = s.points;
             pos = s.pos;
             height = s.height;
 
-            int length = s.dist.Length;
-            dist = new int[length];
-            System.Array.Copy(s.dist, dist, length);
+            if (deep)
+            {
+                int length = s.dist.Length;
+                dist = new int[length];
+                System.Array.Copy(s.dist, dist, length);
 
-            length = s.obstacleType.Length;
-            obstacleType = new ObstType[length];
-            System.Array.Copy(s.obstacleType, obstacleType, length);
+                length = s.obstacleType.Length;
+                obstacleType = new ObstType[length];
+                System.Array.Copy(s.obstacleType, obstacleType, length);
+            }
+            else
+            {
+                dist = s.dist;
+                obstacleType = s.obstacleType;
+            }
 
             zSpeed = s.zSpeed;
             canLeft = s.canLeft;

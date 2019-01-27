@@ -214,7 +214,7 @@ namespace AI {
         private void Feedback(float reward, float lastStatePredictedValue, GameStat last,
             Moves lastMove, GameStat current, float currentStatePredictedValue)
         {
-            if (last.dist == null)
+            if (last == null || last.dist == null)
                 return;
 
             float difference = (reward + discount * currentStatePredictedValue)
