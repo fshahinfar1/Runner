@@ -15,11 +15,18 @@ namespace Stat
 
         private GameStat stat;
 
+        private PoolDealer poolDealer;
+
         private int posMax = 10;
         private int heightMax = 2;
         private int distMax = 5;
 
         private int coins = 0;
+
+        // cache
+        private GameStat newStat;
+        float[] minDist;
+
 
         private void Awake()
         {
@@ -32,6 +39,13 @@ namespace Stat
                 Debug.LogError("Player is null!");
             }
             Observer.GetInstance().Register(Observer.Event.CoinCollection, OnCoinCollect);
+
+            // cache
+            poolDealer = PoolDealer.Instance;
+            poolDealer.CreatePool<int>("dist", 2, true, posMax);
+            poolDealer.CreatePool<ObstType>("obstacles", 2, true, posMax);
+            minDist = new float[posMax];
+            newStat = new GameStat();
         }
 
         private void FixedUpdate()
@@ -47,13 +61,11 @@ namespace Stat
         {
             coins++;
         }
-
         private GameStat Extract()
         {
-            GameStat newStat = new GameStat();
-            newStat.dist = new int[posMax];
-            newStat.obstacleType = new ObstType[posMax];
-            float[] minDist = new float[posMax];
+            newStat.dist = (int [])poolDealer.Get("dist");
+            newStat.obstacleType = (ObstType[]) poolDealer.Get("obstacles");
+            
             for (int i = 0; i < posMax; i++)
             {
                 newStat.dist[i] = distMax-1;
@@ -67,8 +79,12 @@ namespace Stat
             newStat.height = GetHeight(playerPos.y);
             newStat.zSpeed = playerRigidbody.velocity.z;
 
-            List<Transform> obstacles = roadLooper.GetRoadByIndex(0).GetObstacles();
-            obstacles.AddRange(roadLooper.GetRoadByIndex(1).GetObstacles());
+            List<Transform> tmp = roadLooper.GetRoadByIndex(0).GetObstacles();
+            List<Transform> tmp2 = roadLooper.GetRoadByIndex(1).GetObstacles();
+            List<Transform> obstacles = new List<Transform>(tmp.Count + tmp2.Count);
+            obstacles.AddRange(tmp);
+            obstacles.AddRange(tmp2);
+            
 
             foreach (Transform obs in obstacles)
             {
@@ -79,7 +95,6 @@ namespace Stat
 
                 if (dist.z > 0)
                 {
-                    // int lastDist = newStat.dist[pos];
                     int intDist = GetDist(dist.z);
                     if (dist.z < minDist[pos])
                     {

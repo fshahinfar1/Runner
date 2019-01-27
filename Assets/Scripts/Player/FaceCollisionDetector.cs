@@ -32,7 +32,7 @@ public class FaceCollisionDetector : MonoBehaviour
             Debug.Log(dist.y);
             Debug.Log(dist.z);
 
-            if (dist.z < 0.91f && dist.z > 0.0f && dist.y > -0.91f)
+            if (dist.z < 0.95f && dist.z > 0.0f && dist.y > -0.91f)
             {
                 if (collideAction != null)
                 {
