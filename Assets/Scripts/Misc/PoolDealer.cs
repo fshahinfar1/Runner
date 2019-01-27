@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class PoolDealer
 {
-    struct Pool
+    class Pool
     {
         public int size;
         public int readyIndex;
@@ -30,7 +31,8 @@ public class PoolDealer
         p.pool = new List<object>(count);
         if (isArray)
         {
-            p.pool.Add(new T[dimention]);
+            for (int i = 0; i < count; i++)
+                p.pool.Add(new T[dimention]);
         }
         else
         {
@@ -45,6 +47,9 @@ public class PoolDealer
     public object Get(string t)
     {
         Pool p = table[t];
-        return p.pool[p.readyIndex++];
+        object o = p.pool[p.readyIndex];
+        p.readyIndex = (p.readyIndex + 1) % p.size;
+
+        return o;
     }
 }
