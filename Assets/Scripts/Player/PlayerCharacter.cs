@@ -18,7 +18,7 @@ namespace Player
         private bool outOfControl = false;
         private bool ignoreCollision = false;
 
-        //private LayerMask layerMask;
+        private LayerMask layerMask;
 
         private void Awake()
         {
@@ -57,7 +57,7 @@ namespace Player
                 state.SetMode(Mode.Air);
             }
 
-            //layerMask = LayerMask.GetMask("Obstacle");
+            layerMask = LayerMask.GetMask(new string[]{"Obstacle", "Default"});
 
             // register to face collision detection
             FaceCollisionDetector fcd = transform.Find("FaceCollisionDetector")
@@ -122,10 +122,13 @@ namespace Player
 
             if (!Physics.Raycast(transform.position, direction, 0.6f))
             {
-                state.updateHorizontalSpeed(magnitude);
-                //rigidbody.velocity = state.GetVelocity();
-                float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
-                rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
+                //state.updateHorizontalSpeed(magnitude);
+                ////rigidbody.velocity = state.GetVelocity();
+                //float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
+                //rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
+
+                Vector3 pos = transform.position + direction;
+                rigidbody.MovePosition(pos);
             }
         }
 
@@ -145,13 +148,14 @@ namespace Player
             if (outOfControl)
                 return;
 
-            if (state.CanJump())
+            if (Physics.Raycast(transform.position, Vector3.down, 0.6f, layerMask))
             {
                 state.Jump();
                 state.UpdateCanJump(false);
                 state.SetMode(Mode.Air);
 
-                rigidbody.velocity = state.GetVelocity();
+                //rigidbody.velocity = state.GetVelocity();
+                rigidbody.AddRelativeForce(Vector3.up * 5, ForceMode.Impulse);
             }
         }
 
@@ -174,14 +178,16 @@ namespace Player
             material.SetColor("_Color", c);
             c.a = 1;
             c.b = 0;
-            
+
+
+            float delayTime = 2 / forwardSpeed;
             // after one second set collider 
             DelayCall.Call(this, () => {
                 Debug.Log("Set collision active");
                 ignoreCollision = false;
                 Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
                 material.SetColor("_Color", c);
-            }, 2.0f);
+            }, delayTime);
 
             outOfControl = false;
         }

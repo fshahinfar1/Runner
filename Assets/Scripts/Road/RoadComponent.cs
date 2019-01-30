@@ -7,9 +7,26 @@ public class RoadComponent : MonoBehaviour {
     private RoadType type;
     public RoadType roadType;
 
+    private List<GameObject> coins;
+    private List<Transform> obstacles;
+
     private void Awake()
     {
         type = roadType;
+
+        Transform tmp = transform.Find("Coins");
+        Transform obstacleParent = transform.Find("Obstacles");
+        coins = new List<GameObject>(tmp.childCount);
+        obstacles = new List<Transform>(obstacleParent.childCount + tmp.childCount);
+        foreach(Transform t in tmp)
+        {
+            coins.Add(t.gameObject);
+            obstacles.Add(t);
+        }
+        foreach(Transform t in obstacleParent)
+        {
+            obstacles.Add(t);
+        }
     }
 
     public RoadType GetRoadType()
@@ -34,13 +51,15 @@ public class RoadComponent : MonoBehaviour {
 
     public List<Transform> GetObstacles()
     {
-        Transform obstacles = transform.Find("Obstacles");
-        List<Transform> result = new List<Transform>(obstacles.childCount);
-        foreach (Transform obs in obstacles)
+        return obstacles;
+    }
+
+    public void Place()
+    {
+        SetActive(true);
+        foreach(GameObject g in coins)
         {
-            if (obs.gameObject.activeSelf)
-                result.Add(obs);
+            g.SetActive(true);
         }
-        return result;
     }
 }

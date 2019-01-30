@@ -34,22 +34,30 @@ namespace Player
 
         void Update()
         {
-            float horizontalNormal = Input.GetAxis("Horizontal");
-            if (Mathf.Abs(horizontalNormal) > horizontalSensitivity)
-            {
-                player.HorizontalMove(horizontalNormal);
-            }
+            //float horizontalNormal = Input.GetAxis("Horizontal");
+            //if (Mathf.Abs(horizontalNormal) > horizontalSensitivity)
+            //{
+            //    player.HorizontalMove(horizontalNormal);
+            //}
 
-            float verticalNormal = Input.GetAxis("Vertical");
-            if (Mathf.Abs(verticalNormal) > verticalSensitivity)
-            {
-                player.VerticalMove(verticalNormal);
-            }
+            //float verticalNormal = Input.GetAxis("Vertical");
+            //if (Mathf.Abs(verticalNormal) > verticalSensitivity)
+            //{
+            //    player.VerticalMove(verticalNormal);
+            //}
             
             //float jumpNormal = Input.GetAxis("Jump");
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 player.Jump();
+            }
+            else if (Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                player.HorizontalMove(-1);
+            }
+            else if (Input.GetKeyUp(KeyCode.RightArrow))
+            {
+                player.HorizontalMove(1);
             }
         }
     }

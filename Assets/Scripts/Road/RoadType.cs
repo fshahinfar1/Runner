@@ -5,4 +5,5 @@
     Ramp,
     Wall,
     Puzzle,
+    Pillars,
 }

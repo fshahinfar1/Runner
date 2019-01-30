@@ -11,13 +11,42 @@ namespace Stat
         public GameObject player;
         public RoadLooper roadLooper;
         public StatDisplay display;
+        private Rigidbody playerRigidbody;
 
         private GameStat stat;
 
-        private float distThreshold = 0.5f;
-        private float distMaxThreshold = 1f;
+        private PoolDealer poolDealer;
 
         private int posMax = 10;
+        private int heightMax = 2;
+        private int distMax = 5;
+
+        private int coins = 0;
+
+        // cache
+        private GameStat newStat;
+        float[] minDist;
+
+
+        private void Awake()
+        {
+            if (player != null)
+            {
+                playerRigidbody = player.GetComponent<Rigidbody>();
+            }
+            else
+            {
+                Debug.LogError("Player is null!");
+            }
+            Observer.GetInstance().Register(Observer.Event.CoinCollection, OnCoinCollect);
+
+            // cache
+            poolDealer = PoolDealer.Instance;
+            poolDealer.CreatePool<int>("dist", 2, true, posMax);
+            poolDealer.CreatePool<ObstType>("obstacles", 2, true, posMax);
+            minDist = new float[posMax];
+            newStat = new GameStat();
+        }
 
         private void FixedUpdate()
         {
@@ -28,50 +57,98 @@ namespace Stat
             }
         }
 
+        private void OnCoinCollect()
+        {
+            coins++;
+        }
         private GameStat Extract()
         {
-            GameStat newStat = new GameStat();
+            newStat.dist = (int [])poolDealer.Get("dist");
+            newStat.obstacleType = (ObstType[]) poolDealer.Get("obstacles");
+            
+            for (int i = 0; i < posMax; i++)
+            {
+                newStat.dist[i] = distMax-1;
+                newStat.obstacleType[i] = ObstType.None;
+                minDist[i] = float.MaxValue;
+            }
 
             Vector3 playerPos = player.transform.position;
 
-            newStat.pos = Mathf.FloorToInt(playerPos.x + 5) % posMax;
-            newStat.offset = playerPos.x - (newStat.pos - 4);
-            newStat.dist = new float[posMax];
+            newStat.pos = GetPos(playerPos.x);
+            newStat.height = GetHeight(playerPos.y);
+            newStat.zSpeed = playerRigidbody.velocity.z;
 
-            RoadComponent road = roadLooper.GetRoadByIndex(0); // get current road comming road
-            List<Transform> obstacles = road.GetObstacles();
-            obstacles.AddRange(roadLooper.GetRoadByIndex(1).GetObstacles()); // check next comming road
-            foreach (Transform t in obstacles)
+            List<Transform> tmp = roadLooper.GetRoadByIndex(0).GetObstacles();
+            List<Transform> tmp2 = roadLooper.GetRoadByIndex(1).GetObstacles();
+            List<Transform> obstacles = new List<Transform>(tmp.Count + tmp2.Count);
+            obstacles.AddRange(tmp);
+            obstacles.AddRange(tmp2);
+            
+
+            foreach (Transform obs in obstacles)
             {
-                Vector3 dist = t.position - playerPos;
+                int pos = GetPos(obs.position.x);
+                ObstacleStat obsStat = obs.GetComponent<ObstacleStat>();
+
+                Vector3 dist = obs.position - playerPos;
 
                 if (dist.z > 0)
                 {
-                    int pos = Mathf.FloorToInt(t.position.x + 5) % posMax;
-
-                    float lastDist = newStat.dist[pos];
-                    newStat.dist[pos] = Mathf.Min(lastDist, Mathf.Clamp(dist.z/20, 0, 1));
+                    int intDist = GetDist(dist.z);
+                    if (dist.z < minDist[pos])
+                    {
+                        minDist[pos] = dist.z;
+                        newStat.dist[pos] = intDist;
+                        newStat.obstacleType[pos] = obsStat.GetObsType();
+                        obsStat.SetText(pos.ToString());
+                    }
                 }
             }
+
+            newStat.coins = coins;
+
             return newStat;
+        }
+
+        private int GetPos(float x)
+        {
+            float tmp = x + 5f;
+            return Mathf.FloorToInt(tmp);
+        }
+
+        private int GetHeight(float y)
+        {
+            return Mathf.Clamp(Mathf.FloorToInt(y), 0, heightMax - 1);
+        }
+
+        private int GetDist(float z)
+        {
+            return Mathf.Clamp(Mathf.FloorToInt(z), 0, distMax - 1);
         }
 
         public GameStat GetStat()
         {
+            coins = 0;
             return stat;
         }
 
-        public static float CalcObstDanger(float dist)
+        public static float CalcObstDanger(float dist, Pos pos)
         {
-            if (dist == 0)
+            if (dist < 0.5 && pos != Pos.Front)
             {
-                Debug.LogWarning("CalcObstDanger: dist is zero!");
-                return 1;
+                return 0;
             }
             dist = Mathf.Abs(dist);
             float danger = Mathf.Clamp(1 / dist, 0, 1);
             return danger;
         }
 
+        public enum Pos
+        {
+            Left,
+            Front,
+            Right
+        }
     }
 }

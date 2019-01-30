@@ -9,39 +9,40 @@ namespace AI {
         Nothing,
         Left,
         Right,
-        //Jump,
+        Jump,
     }
 
     public class AIController : MonoBehaviour {
 
-        private int countMoves = 3;
+        private int countMoves = 4;
+
         public float responseDelay = 0.2f; // seconds
         private float timer = 0;
 
         public GameObject player;
         private Player.CharacterInput inputInterface;
-        public StatExtractor consultor;
-        public AIKeyboard keyboard;
 
-        // q learning
+        public StatExtractor consultor;
+
+        public AIKeyboard keyboard;
+        public StateMoveValueDisplay display;
+
         private GameStat lastStat;
         private Moves lastMove = Moves.Nothing;
         private float lastMoveValue;
-        private float[] lastMoveFeatures;
-        public float[] weights;
 
-        // prediction
-        private float[] lastPredictedFeatures;
-        private float[] prePredictionFeatures;
-        private float[][] predictionWeights;
-
-        //q laerning parameters
         public float learningRate = 0.01f;
         public float discount = 0.80f;
         public float epsilon = 0.20f;
-        private int countPrameters = 12;
 
         private bool lost = false;
+
+        //[pos, height, dist, move, obsType]
+        private float[,,,,] QMat;
+
+        // temp
+        float[] qvalues;
+
 
         private void Awake()
         {
@@ -51,16 +52,13 @@ namespace AI {
                 Debug.LogError("Input interface not found");
             }
 
-            weights = DataStore.Load("Weights");
-            if (weights == null || weights.Length != countPrameters)
-                weights = new float[countPrameters];
 
-            predictionWeights = new float[countMoves][];
-            for (int i = 0; i < countMoves; i++)
+            QMat = DataStore.Load("QMat");
+
+            if (QMat == null)
             {
-                predictionWeights[i] = DataStore.Load(string.Format("PredictionWeights_{0}", i));
-                if (predictionWeights[i] == null || predictionWeights[i].Length != countPrameters)
-                    predictionWeights[i] = new float[countPrameters];
+                Debug.LogWarning("Coudln't load QMat!");
+                QMat = new float[10, 2, 5, countMoves, 3];
             }
 
             // initialize random seed
@@ -75,6 +73,9 @@ namespace AI {
             {
                 Debug.LogError("Ai keyboard not found!");
             }
+
+            //temps
+            qvalues = new float[countMoves];
         }
 
         private void Update()
@@ -108,67 +109,77 @@ namespace AI {
 
             // choose an action for this situation
             float value;
-            float[] features; // f(s, a)
-            Moves move = ChooseAction(stat, out value, out features);
+            Moves move = ChooseAction(stat, out value);
 
             // learn from last action
-            Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value, lastMoveFeatures);
-
-            // learn how to predict
-            LearnPrediction(FeatureExtractor.Extract(stat), lastMove);
+            Feedback(reward, lastMoveValue, lastStat, lastMove, stat, value);
 
             // performe the action
             Act(move);
 
             // remember action so you can evaluate and learn
             lastStat = stat;
-            lastMoveValue = value;
             lastMove = move;
-            lastMoveFeatures = features;
+            lastMoveValue = value;
+
+            // display
+            display.SetReward(reward);
 
             // if  Ai lost the game
             if (stat.lose)
                 Lost();
         }
 
-        private float QValue(GameStat stat, Moves move, out float[] features)
+        private float QValue(GameStat stat, Moves move)
         {
-            features = Predict(stat, (Moves)move);
-            float value = 0;
-            //features = FeatureExtractor.Extract(predictedStat);
-            value = Vectors.Dot(features, weights);
-            return value;
+            int pos = stat.pos;
+            int height = stat.height;
+            int dist = stat.dist[pos];
+            int obsType = (int)stat.obstacleType[pos];
+            return QMat[pos, height, dist, (int)move, obsType];
         }
 
-        private Moves ChooseAction(GameStat stat, out float value, out float[] features)
+        private Moves ChooseAction(GameStat stat, out float value)
         {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
 
-            // epsilon greedy
-            float chance = Random.Range(0, 1);
-            if (chance < epsilon)
+            Debug.Log("type: " + stat.obstacleType[stat.pos].ToString());
+
+            float chance = Random.Range(0, 100);
+            if (chance < epsilon * 100)
             {
-                action = (Moves)Mathf.Floor(Random.Range(0, countMoves + 0.99f));
-                value = QValue(stat, action, out features);
+                action = (Moves)Mathf.FloorToInt(Random.Range(0, countMoves));
+                value = QValue(stat, action);
+
+                qvalues[(int)action] = value;
+                display.Set(qvalues);
+
                 return action;
             }
 
-            // max action
-            features = null;
+
             for (int move=0; move < countMoves; move++)
             {
-                float[] feats;
-                float qValue = QValue(stat, (Moves)move, out feats);   
+                Moves m = (Moves)move;
+                //if ((m == Moves.Left && !stat.canLeft) || 
+                //    (m == Moves.Right && !stat.canRight))
+                //{
+                //    continue;
+                //}
+
+                float qValue = QValue(stat, m);   
                 if (qValue > maxVal)
                 {
                     maxVal = qValue;
-                    action = (Moves)move;
-                    features = feats;
+                    action = m;
                 }
+
+                qvalues[move] = qValue;
             }
             Debug.Log("Action: " + action.ToString());
             Debug.Log("Value: " + maxVal);
+            display.Set(qvalues);
 
             value = maxVal;
             return action;
@@ -176,19 +187,19 @@ namespace AI {
 
         private void Act(Moves move)
         {
-            keyboard.SetAction(move);
-        }
-
-        private float[] Predict(GameStat stat, Moves move)
-        {
-            float[] f = FeatureExtractor.Extract(stat);
-            float[] f2 = Vectors.ElementWiseProduct(f, predictionWeights[(int)move]);
-            //f = Vectors.Sum(f, predictionBias);
-
-            prePredictionFeatures = f;
-            lastPredictedFeatures = f2;
-
-            return f2;
+            //keyboard.SetAction(move);
+            switch (move)
+            {
+                case Moves.Left:
+                    inputInterface.HorizontalMove(-1);
+                    break;
+                case Moves.Right:
+                    inputInterface.HorizontalMove(1);
+                    break;
+                case Moves.Jump:
+                    inputInterface.Jump();
+                    break;
+            }
         }
 
         private float GetReward(GameStat last, GameStat current)
@@ -197,42 +208,36 @@ namespace AI {
             {
                 return -5; // lose
             }
-            return 0;
+            return current.coins;
         }
 
         private void Feedback(float reward, float lastStatePredictedValue, GameStat last,
-            Moves move, GameStat current, float currentStatePredictedValue, float[] lastFeatures)
+            Moves lastMove, GameStat current, float currentStatePredictedValue)
         {
-            if (lastFeatures == null)
+            if (last == null || last.dist == null)
                 return;
 
-            float difference = (reward + discount * currentStatePredictedValue) - lastStatePredictedValue;
+            float difference = (reward + discount * currentStatePredictedValue)
+                - lastStatePredictedValue;
 
-            for (int i = 0; i < weights.Length; i++)
-            {
-                weights[i] += learningRate * difference * lastFeatures[i];
-            }
-        }
-
-        private void LearnPrediction(float[] currentFeatures, Moves lastMove)
-        {
-            if (lastPredictedFeatures == null || prePredictionFeatures == null)
-                return;
-
-            for (int i = 0; i < lastPredictedFeatures.Length; i++)
-            {
-                float diff = currentFeatures[i] - lastPredictedFeatures[i];
-                predictionWeights[(int)lastMove][i] += learningRate * diff;
-            }
+            int lastPos = last.pos;
+            int lastDist = last.dist[lastPos];
+            int lastHeight = last.height;
+            int lastObsType = (int)last.obstacleType[lastPos];
+            QMat[lastPos, lastHeight, lastDist, (int)lastMove, lastObsType] 
+                += learningRate * difference;
         }
 
         public void Lost()
         {
             lost = true;
-            DataStore.Store(weights, "Weights");
-            DataStore.Store(predictionWeights[0], "PredictionWeights_0");
-            DataStore.Store(predictionWeights[1], "PredictionWeights_1");
-            DataStore.Store(predictionWeights[2], "PredictionWeights_2");
+            DataStore.Store(QMat, "QMat");
+
+            string path = Application.persistentDataPath + "/death.txt";
+            System.IO.TextWriter tw = new System.IO.StreamWriter(path, true);
+            tw.Write(string.Format("{0}\n", System.DateTime.Now.ToString()));
+            tw.Flush();
+            tw.Close();
         }
 
         public bool HasLost()

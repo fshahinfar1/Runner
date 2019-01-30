@@ -55,7 +55,7 @@ public class RoadLooper : MonoBehaviour
         position.z += planeWidth;
         shouldBePlacedRoad.SetPosition(position);  // place new road after the last road
         collection.Place(type);  // a new road has been placed
-        shouldBePlacedRoad.SetActive(true);
+        shouldBePlacedRoad.Place();
         collection.Next();  // update collection current road to next road
         return position;
     }

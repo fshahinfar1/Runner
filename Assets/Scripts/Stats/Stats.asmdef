@@ -1,7 +1,9 @@
 {
     "name": "Stats",
     "references": [
-        "Road"
+        "Road",
+        "Unity.TextMeshPro",
+        "Utils"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
