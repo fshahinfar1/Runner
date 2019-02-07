@@ -76,6 +76,7 @@ namespace Stat
             Vector3 playerPos = player.transform.position;
 
             newStat.pos = GetPos(playerPos.x);
+            //Debug.Log("GetPos: " + newStat.pos);
             newStat.height = GetHeight(playerPos.y);
             newStat.zSpeed = playerRigidbody.velocity.z;
 
@@ -95,7 +96,8 @@ namespace Stat
 
                 if (dist.z > 0)
                 {
-                    int intDist = GetDist(dist.z);
+                    float velocity = playerRigidbody.velocity.z;
+                    int intDist = GetDist(dist.z, velocity);
                     if (dist.z < minDist[pos])
                     {
                         minDist[pos] = dist.z;
@@ -122,9 +124,10 @@ namespace Stat
             return Mathf.Clamp(Mathf.FloorToInt(y), 0, heightMax - 1);
         }
 
-        private int GetDist(float z)
+        private int GetDist(float z, float v)
         {
-            return Mathf.Clamp(Mathf.FloorToInt(z), 0, distMax - 1);
+            int tmp = Mathf.FloorToInt(z / v * 2);
+            return Mathf.Clamp(tmp, 0, distMax - 1);
         }
 
         public GameStat GetStat()

@@ -32,9 +32,18 @@ namespace Stat
             style.alignment = TextAnchor.UpperLeft;
             style.fontSize = h * 5 / 100;
             style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-            string text = string.Format("Pos: {0}, Dist: {1} ",
-                stat.pos, stat.dist[stat.pos]);
-            GUI.Label(rect, text, style);
+            Debug.LogWarning(stat.pos);
+            try
+            {
+                string text = string.Format("Pos: {0}, Dist: {1} ",
+                    stat.pos, stat.dist[stat.pos]);
+                GUI.Label(rect, text, style);
+
+            }
+            catch
+            {
+                Debug.Break();
+            }
 
             Rect rect2 = new Rect(0, 0, w, h * 5 / 100);
             rect2.yMin = h * 20 / 100;
