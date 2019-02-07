@@ -231,8 +231,34 @@ namespace AI {
             int lastDist = last.dist[lastPos];
             int lastHeight = last.height;
             int lastObsType = (int)last.obstacleType[lastPos];
-            QMat[lastPos, lastHeight, lastDist, (int)lastMove, lastObsType] 
-                += learningRate * difference;
+            double tmpQVal = learningRate * difference;
+            tmpQVal += QMat[lastPos, lastHeight, lastDist, (int)lastMove, lastObsType];
+
+            // Check for bounds of float value so qvalue don't exceed the limits
+            float qvalue;
+            if (tmpQVal > 0)
+            {
+                if (tmpQVal > float.MaxValue)
+                {
+                    qvalue = float.MaxValue;
+                }
+                else
+                {
+                    qvalue = (float)tmpQVal;
+                }
+            }
+            else
+            {
+                if (tmpQVal < float.MinValue)
+                {
+                    qvalue = float.MinValue;
+                }
+                else
+                {
+                    qvalue = (float)tmpQVal;
+                }
+            }
+            QMat[lastPos, lastHeight, lastDist, (int)lastMove, lastObsType] = qvalue;
         }
 
         public void Lost()
