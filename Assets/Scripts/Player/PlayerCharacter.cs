@@ -9,7 +9,8 @@ namespace Player
     {
         public PlayerState state;
         private new Rigidbody rigidbody;
-        private new Collider collider;
+        //private new Collider collider;
+        private FaceCollisionDetector fcd;
         private Material material;
 
         public float forwardSpeed = 1.0f;
@@ -24,13 +25,13 @@ namespace Player
         {
             state = new PlayerState();
             rigidbody = GetComponent<Rigidbody>();
-            collider = GetComponent<Collider>();
+            //collider = GetComponent<Collider>();
             material =  GetComponent<Renderer>().material;
 
-            if (collider == null)
-            {
-                Debug.LogError("Player collider is null!");
-            }
+            //if (collider == null)
+            //{
+            //    Debug.LogError("Player collider is null!");
+            //}
 
             // register player to controller
             GetComponent<Controller>().player = this;
@@ -60,7 +61,7 @@ namespace Player
             layerMask = LayerMask.GetMask(new string[]{"Obstacle", "Default"});
 
             // register to face collision detection
-            FaceCollisionDetector fcd = transform.Find("FaceCollisionDetector")
+            fcd = transform.Find("FaceCollisionDetector")
                 .GetComponent<FaceCollisionDetector>();
             fcd.Register(FaceHit);
         }
@@ -181,20 +182,33 @@ namespace Player
             c.a = 0.1f;
             c.b = 0.5f;
             material.SetColor("_Color", c);
-            c.a = 1;
-            c.b = 0;
 
 
             float delayTime = 2 / forwardSpeed;
             // after one second set collider 
-            DelayCall.Call(this, () => {
-                Debug.Log("Set collision active");
-                ignoreCollision = false;
-                Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
-                material.SetColor("_Color", c);
-            }, delayTime);
+            DelayCall.Call(this, ActiveCollision, delayTime);
 
             outOfControl = false;
+        }
+
+        private void ActiveCollision()
+        {
+            if (fcd.HasCollision())
+            {
+                Debug.Log("Wait for cube to exit danger zone");
+                // if there is no more collision
+                DelayCall.Call(this, ActiveCollision, 1);
+                return;
+            }
+            int playerLayer = LayerMask.NameToLayer("Player");
+            int obstacleLayer = LayerMask.NameToLayer("Obstacle");
+            Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
+            ignoreCollision = false;
+
+            Color c = material.GetColor("_Color");
+            c.a = 1;
+            c.b = 0;
+            material.SetColor("_Color", c);
         }
     }
 }
