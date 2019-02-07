@@ -28,9 +28,6 @@ public class FaceCollisionDetector : MonoBehaviour
         if (other.gameObject.tag == "Obstacle")
         {
             Vector3 dist = other.transform.position - transform.position;
-            Debug.Log(dist.x);
-            Debug.Log(dist.y);
-            Debug.Log(dist.z);
 
             //if (dist.z < 0.95f && dist.z > 0.0f && dist.y > -0.91f)
             {

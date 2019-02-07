@@ -58,7 +58,7 @@ namespace AI {
             if (QMat == null)
             {
                 Debug.LogWarning("Coudln't load QMat!");
-                QMat = new float[10, 2, 5, countMoves, 3];
+                QMat = new float[10, 2, 5, countMoves, 4];
             }
 
             // initialize random seed
@@ -96,6 +96,9 @@ namespace AI {
         private void Respond()
         {
             //Debug.Log("AI responds!");
+            if (inputInterface.IsIgnoringCollision() && 
+                !inputInterface.IsOutOfControl() && !lost)
+                return;
 
             // take your hand of the keyboard
             keyboard.SetAction(Moves.Nothing);
@@ -144,7 +147,7 @@ namespace AI {
             float maxVal = -int.MaxValue;
             Moves action = Moves.Nothing;
 
-            Debug.Log("type: " + stat.obstacleType[stat.pos].ToString());
+            //Debug.Log("type: " + stat.obstacleType[stat.pos].ToString());
 
             float chance = Random.Range(0, 100);
             if (chance < epsilon * 100)
@@ -177,8 +180,8 @@ namespace AI {
 
                 qvalues[move] = qValue;
             }
-            Debug.Log("Action: " + action.ToString());
-            Debug.Log("Value: " + maxVal);
+            //Debug.Log("Action: " + action.ToString());
+            //Debug.Log("Value: " + maxVal);
             display.Set(qvalues);
 
             value = maxVal;
@@ -217,8 +220,12 @@ namespace AI {
             if (last == null || last.dist == null)
                 return;
 
+            //Debug.Log("R: " + reward + " val: " + currentStatePredictedValue);
+            //Debug.Log("last val: " + lastStatePredictedValue);
             float difference = (reward + discount * currentStatePredictedValue)
                 - lastStatePredictedValue;
+
+            //Debug.Log("Difference: " + difference);
 
             int lastPos = last.pos;
             int lastDist = last.dist[lastPos];

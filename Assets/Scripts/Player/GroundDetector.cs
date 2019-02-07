@@ -19,7 +19,6 @@ namespace Player {
 
         private void Hit()
         {
-            Debug.Log("Hit Ground!");
             hitGround = true;
             if (hit != null)
             {
@@ -29,7 +28,6 @@ namespace Player {
 
         private void Leave()
         {
-            Debug.Log("Leave Ground!");
             hitGround = false;
             if (leave != null)
             {

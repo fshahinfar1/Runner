@@ -164,6 +164,11 @@ namespace Player
             return outOfControl;
         }
 
+        public bool IsIgnoringCollision()
+        {
+            return ignoreCollision;
+        }
+
         // Player Chararcter
         public void Refresh()
         {
