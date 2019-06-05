@@ -6,6 +6,7 @@ public class Observer{
     public enum Event
     {
         CoinCollection,
+        PlayerFaceHit,
     }
 
     private static Observer instance;

@@ -22,7 +22,6 @@ public class RoadLooper : MonoBehaviour
 
     private void Initialize()
     {
-
         RoadComponent component = transform.GetChild(0).GetComponent<RoadComponent>();
         collection = new RoadCollection(component);
 
@@ -36,7 +35,7 @@ public class RoadLooper : MonoBehaviour
     }
 
     /// <summary>
-    /// place road component of the given type after this road
+    /// place road component of the given type after last road
     /// component
     /// </summary>
     /// <param name="type">type of next road component</param>

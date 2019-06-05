@@ -9,29 +9,27 @@ namespace Player
     {
         public PlayerState state;
         private new Rigidbody rigidbody;
-        //private new Collider collider;
         private FaceCollisionDetector fcd;
         private Material material;
 
         public float forwardSpeed = 1.0f;
         public float horizontalSpeed = 1.0f;
+        public float bodyWidth;
 
         private bool outOfControl = false;
         private bool ignoreCollision = false;
 
         private LayerMask layerMask;
 
+        private Vector3 startGlobalPosition;
+
         private void Awake()
         {
             state = new PlayerState();
             rigidbody = GetComponent<Rigidbody>();
-            //collider = GetComponent<Collider>();
             material =  GetComponent<Renderer>().material;
 
-            //if (collider == null)
-            //{
-            //    Debug.LogError("Player collider is null!");
-            //}
+            startGlobalPosition = transform.position;  // position player starts the game from
 
             // register player to controller
             GetComponent<Controller>().player = this;
@@ -68,19 +66,9 @@ namespace Player
 
         private void FixedUpdate()
         {
-            //state.SetVelocity(rigidbody.velocity);
-            //state.updateVerticalSpeed(1);
-            //rigidbody.velocity = state.GetVelocity();
             if (!outOfControl)
             {
-                //if (!ignoreCollision &&
-                //    Physics.Raycast(transform.position, Vector3.forward, 0.6f, layerMast))
-                //{
-                //    Debug.LogError("Out of control!");
-                //    outOfControl = true;
-                //    return;
-                //}
-
+                // constant add force to maintain constant speed !
                 float f = Mathf.Max(forwardSpeed - rigidbody.velocity.z, 0);
                 rigidbody.AddRelativeForce(Vector3.forward * f, ForceMode.VelocityChange);
             }
@@ -107,6 +95,9 @@ namespace Player
 
             Debug.LogError("Out of control!");
             outOfControl = true;
+
+            var observer = Observer.GetInstance();
+            observer.Trigger(Observer.Event.PlayerFaceHit);
         }
 
         // Character Input Interface
@@ -121,12 +112,12 @@ namespace Player
                 direction = Vector3.right;
             }
 
-            if (!Physics.Raycast(transform.position, direction, 0.6f))
+            if (!Physics.Raycast(transform.position, direction, bodyWidth))
             {
-                //state.updateHorizontalSpeed(magnitude);
-                ////rigidbody.velocity = state.GetVelocity();
-                //float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
-                //rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
+                // if not blocked by obstacle
+
+                // float fMagnitude = horizontalSpeed - Mathf.Abs(rigidbody.velocity.x) * Time.deltaTime;
+                // rigidbody.AddRelativeForce(direction * fMagnitude, ForceMode.VelocityChange);
 
                 Vector3 pos = transform.position + direction;
                 rigidbody.MovePosition(pos);
@@ -139,9 +130,6 @@ namespace Player
                 return;
 
             // not implement because player is moved forward constantly
-
-            //state.updateVerticalSpeed(magnitude);
-            //rigidbody.velocity = state.GetVelocity();
         }
 
         public void Jump()
@@ -170,45 +158,53 @@ namespace Player
             return ignoreCollision;
         }
 
-        // Player Chararcter
-        public void Refresh()
-        {
-            // deactivate collider
-            int playerLayer = LayerMask.NameToLayer("Player");
-            int obstacleLayer = LayerMask.NameToLayer("Obstacle");
-            ignoreCollision = true;
-            Physics.IgnoreLayerCollision(playerLayer, obstacleLayer);
-            Color c = material.GetColor("_Color");
-            c.a = 0.1f;
-            c.b = 0.5f;
-            material.SetColor("_Color", c);
-
-
-            float delayTime = 2 / forwardSpeed;
-            // after one second set collider 
-            DelayCall.Call(this, ActiveCollision, delayTime);
-
+        public void ResetPlayer() {
             outOfControl = false;
-        }
-
-        private void ActiveCollision()
-        {
-            if (fcd.HasCollision())
-            {
-                Debug.Log("Wait for cube to exit danger zone");
-                // if there is no more collision
-                DelayCall.Call(this, ActiveCollision, 1);
-                return;
-            }
-            int playerLayer = LayerMask.NameToLayer("Player");
-            int obstacleLayer = LayerMask.NameToLayer("Obstacle");
-            Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
             ignoreCollision = false;
-
-            Color c = material.GetColor("_Color");
-            c.a = 1;
-            c.b = 0;
-            material.SetColor("_Color", c);
+            transform.position = startGlobalPosition;
+            rigidbody.velocity = new Vector3();
+            // TODO: remove all forces applied to rigidbody
         }
+
+        // Player Chararcter
+        // public void Refresh()
+        // {
+        //     // deactivate collider
+        //     int playerLayer = LayerMask.NameToLayer("Player");
+        //     int obstacleLayer = LayerMask.NameToLayer("Obstacle");
+        //     ignoreCollision = true;
+        //     Physics.IgnoreLayerCollision(playerLayer, obstacleLayer);
+        //     Color c = material.GetColor("_Color");
+        //     c.a = 0.1f;
+        //     c.b = 0.5f;
+        //     material.SetColor("_Color", c);
+
+
+        //     float delayTime = 2 / forwardSpeed;
+        //     // after one second set collider 
+        //     DelayCall.Call(this, ActiveCollision, delayTime);
+
+        //     outOfControl = false;
+        // }
+
+        // private void ActiveCollision()
+        // {
+        //     if (fcd.HasCollision())
+        //     {
+        //         Debug.Log("Wait for cube to exit danger zone");
+        //         // if there is no more collision
+        //         DelayCall.Call(this, ActiveCollision, 1);
+        //         return;
+        //     }
+        //     int playerLayer = LayerMask.NameToLayer("Player");
+        //     int obstacleLayer = LayerMask.NameToLayer("Obstacle");
+        //     Physics.IgnoreLayerCollision(playerLayer, obstacleLayer, false);
+        //     ignoreCollision = false;
+
+        //     Color c = material.GetColor("_Color");
+        //     c.a = 1;
+        //     c.b = 0;
+        //     material.SetColor("_Color", c);
+        // }
     }
 }

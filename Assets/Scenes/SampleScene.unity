@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.32860792, g: 0.6094061, b: 0.90974456, a: 1}
+  m_IndirectSpecularColor: {r: 0.32852954, g: 0.6093809, b: 0.909747, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1596,7 +1596,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &913062762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1957,9 +1957,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2089400149}
-  aiController: {fileID: 913062762}
   roadLooper: {fileID: 870607058}
-  maxPlayerSpeed: 0
+  maxPlayerSpeed: 6
   speedIncreaseSteps: 0.25
 --- !u!4 &1229940157
 Transform:
@@ -3130,6 +3129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   forwardSpeed: 4
   horizontalSpeed: 0.25
+  bodyWidth: 0.6
 --- !u!114 &2089400151
 MonoBehaviour:
   m_ObjectHideFlags: 0
