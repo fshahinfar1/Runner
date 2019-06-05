@@ -63,8 +63,10 @@ namespace Stat
         }
         private GameStat Extract()
         {
-            newStat.dist = (int [])poolDealer.Get("dist");
-            newStat.obstacleType = (ObstType[]) poolDealer.Get("obstacles");
+            //newStat.dist = (int [])poolDealer.Get("dist");
+            newStat.dist = new int[posMax];
+            //newStat.obstacleType = (ObstType[]) poolDealer.Get("obstacles");
+            newStat.obstacleType = new ObstType[posMax];
             
             for (int i = 0; i < posMax; i++)
             {

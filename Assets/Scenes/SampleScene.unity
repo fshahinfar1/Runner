@@ -599,17 +599,17 @@ PrefabInstance:
     - target: {fileID: 754569578085841172, guid: 87fb7314299623e4081cdbd66d5c5919,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.5
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 754569578085841172, guid: 87fb7314299623e4081cdbd66d5c5919,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 754569578085841172, guid: 87fb7314299623e4081cdbd66d5c5919,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 754569578085841172, guid: 87fb7314299623e4081cdbd66d5c5919,
         type: 3}
@@ -1614,8 +1614,8 @@ MonoBehaviour:
   consultor: {fileID: 1599912456}
   keyboard: {fileID: 913062764}
   display: {fileID: 1966234289}
-  learningRate: 1
-  discount: 0.5
+  learningRate: 0.8
+  discount: 0.005
   epsilon: 0.1
 --- !u!4 &913062763
 Transform:

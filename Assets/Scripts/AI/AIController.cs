@@ -236,7 +236,11 @@ namespace AI {
 
             // Check for bounds of float value so qvalue don't exceed the limits
             float qvalue;
-            if (tmpQVal > 0)
+            if (tmpQVal == float.NaN)
+            {
+                qvalue = 0;
+            }
+            else if (tmpQVal > 0)
             {
                 if (tmpQVal > float.MaxValue)
                 {
