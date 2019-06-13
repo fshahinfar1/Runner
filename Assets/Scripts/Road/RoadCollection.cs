@@ -4,64 +4,49 @@ using UnityEngine;
 
 public class RoadCollection: IEnumerable
 {
-    RoadType currentRoad;
-    Dictionary<RoadType, RoadComponent> collection;
-    List<RoadType> placedRoadsByOrder; 
+    Dictionary<RoadType, List<RoadComponent>> collection;
+    List<RoadComponent> placedRoadsByOrder; 
 
-    public RoadCollection(RoadComponent currentRoad)
+    public RoadCollection()
     {
-        collection = new Dictionary<RoadType, RoadComponent>();
-        placedRoadsByOrder = new List<RoadType>();
-
-        RoadType type = currentRoad.GetRoadType();
-
-        Add(currentRoad);
-        SetCurrent(type);
-        Place(type);
+        collection = new Dictionary<RoadType, List<RoadComponent>>();
+        placedRoadsByOrder = new List<RoadComponent>();
     }
 
     public void Add(RoadComponent road)
     {
         RoadType type = road.GetRoadType();
-        if (collection.ContainsKey(type))
-        {
-            Debug.LogError("RoadCollection:Add: road of this type existed");
-            return;
+        if (!collection.ContainsKey(type)) {
+            collection[type] = new List<RoadComponent>();
         }
-        collection.Add(type, road);
+        var list = collection[type];
+        list.Add(road);
     }
 
     public RoadComponent Get(RoadType type)
     {
         if (collection.ContainsKey(type))
         {
-            return collection[type];
+            var list = collection[type];
+            var component = list[0];
+            list.RemoveAt(0);
+            list.Add(component);  // move component to the end of the list
+            return component;
         }
         return null;
     }
 
-    private void SetCurrent(RoadType type)
-    {
-        if (collection.ContainsKey(type))
-        {
-            currentRoad = type;
-        }
-        else
-        {
-            Debug.LogError("RoadCollection:SetCurrent: collection does not have this type");
-        }
-    }
-
     public RoadComponent GetCurrentRoadComponent()
     {
-        return collection[currentRoad];
+        return placedRoadsByOrder[0];
     }
 
-    public void Place(RoadType type)
+    public void AppendComponentList(RoadComponent component)
     {
+        var type = component.GetRoadType();
         if (collection.ContainsKey(type))
         {
-            placedRoadsByOrder.Add(type);
+            placedRoadsByOrder.Add(component);
         }
         else
         {
@@ -69,13 +54,21 @@ public class RoadCollection: IEnumerable
         }
     }
 
+    public void InsertComponent(RoadComponent component, int index) {
+        placedRoadsByOrder.Insert(index, component);
+    }
+
+    public int CountRoadComponents() {
+        return placedRoadsByOrder.Count;
+    }
+
     public RoadComponent GetLastRoadComponent()
     {
         int count = placedRoadsByOrder.Count;
         if (count > 0)
         {
-            RoadType type = placedRoadsByOrder[count - 1];
-            return collection[type];
+            var component = placedRoadsByOrder[count - 1];
+            return component;
         }
         return null;
     }
@@ -83,11 +76,7 @@ public class RoadCollection: IEnumerable
     public void Next()
     {
         placedRoadsByOrder.RemoveAt(0);
-        if (placedRoadsByOrder.Count > 0)
-        {
-            currentRoad = placedRoadsByOrder[0];
-        }
-        else
+        if (placedRoadsByOrder.Count == 0)
         {
             Debug.LogError("RoadCollection:Next: no next road component");
         }
@@ -96,16 +85,28 @@ public class RoadCollection: IEnumerable
     public RoadComponent GetRoadByIndex(int index)
     {
         int count = placedRoadsByOrder.Count;
-        if (count > index)
+        if (count > index && index > -1)
         {
-            RoadType type = placedRoadsByOrder[index];
-            return collection[type];
+            return placedRoadsByOrder[index];
         }
         return null;
     }
 
     public IEnumerator GetEnumerator()
     {
-        return collection.Values.GetEnumerator();
+        return placedRoadsByOrder.GetEnumerator();
+    }
+
+    public void RemoveFromList(RoadComponent compnt) {
+        int id = compnt.GetId();
+        int count = placedRoadsByOrder.Count;
+        int otherId;
+        for (int i = 0; i < count; i++) {
+            otherId = placedRoadsByOrder[i].GetId();
+            if (otherId == id) {
+                placedRoadsByOrder.RemoveAt(i);
+                break;
+            }
+        }
     }
 }
