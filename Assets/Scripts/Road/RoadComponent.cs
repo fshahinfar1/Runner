@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadComponent : MonoBehaviour {
+    private static int idCounter = 0;
 
     private RoadType type;
+    private int id;
     public RoadType roadType;
 
     private List<GameObject> coins;
@@ -13,6 +15,7 @@ public class RoadComponent : MonoBehaviour {
     private void Awake()
     {
         type = roadType;
+        id = idCounter++;
 
         Transform tmp = transform.Find("Coins");
         Transform obstacleParent = transform.Find("Obstacles");
@@ -61,5 +64,9 @@ public class RoadComponent : MonoBehaviour {
         {
             g.SetActive(true);
         }
+    }
+
+    public int GetId() {
+        return id;
     }
 }
