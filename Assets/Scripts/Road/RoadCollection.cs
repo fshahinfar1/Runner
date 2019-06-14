@@ -109,4 +109,27 @@ public class RoadCollection: IEnumerable
             }
         }
     }
+
+    public void Rotate(int count) {
+        int size = placedRoadsByOrder.Count;
+        count = count % size;
+        Debug.Log(count);
+        RoadComponent[] memory = new RoadComponent[count];
+        for (int i = 0; i < count; i++)
+            memory[i] = placedRoadsByOrder[i];
+        for (int i = count; i < size; i++)
+            placedRoadsByOrder[i-count] = placedRoadsByOrder[i];
+        int offest = size - count;
+        for (int i = 0; i < count; i++)
+            placedRoadsByOrder[offest + i] = memory[i];
+    }
+
+    public int IndexOf(RoadComponent compnt) {
+        int size = placedRoadsByOrder.Count;
+        for (int i = 0; i < size; i++) {
+            if (placedRoadsByOrder[i] == compnt)
+                return i;
+        }
+        return -1;
+    }
 }
