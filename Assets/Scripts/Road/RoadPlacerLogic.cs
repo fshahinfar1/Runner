@@ -11,4 +11,8 @@ public class RoadPlacerLogic
         cur %= count;
         return type;
     }
+
+    public static void _Reset() {
+        cur = 0;
+    }
 }

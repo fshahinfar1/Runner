@@ -11,11 +11,13 @@ public class RoadUpdateTrigger : MonoBehaviour {
     private ObstacleGenretor obstacleGenretor;
 
     private Vector3 position;
+    private Vector3 startPosition;
 
     public float ResetOriginThreshhold=80.0f;
 
     private void Awake()
     {
+        startPosition = transform.position;
         roadLooper = Object.FindObjectOfType<RoadLooper>();
         obstaclePlacer = Object.FindObjectOfType<ObstaclePlacer>();
         obstacleGenretor = new ObstacleGenretor(10, 10);
@@ -54,9 +56,14 @@ public class RoadUpdateTrigger : MonoBehaviour {
         transform.position = position;
 
         // design how obstacles should be
-        ObstacleMap map = obstacleGenretor.Generate();
+        // ObstacleMap map = obstacleGenretor.Generate();
         // place obstacles on the new road
-        GameObject road = roadLooper.GetLastRoad().gameObject;
+        // GameObject road = roadLooper.GetLastRoad().gameObject;
         //obstaclePlacer.Place(road, map);
+    }
+
+    public void _Reset() {
+        transform.position = startPosition;
+        position = startPosition;
     }
 }
