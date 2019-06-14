@@ -11,6 +11,7 @@ public class RoadLooper : MonoBehaviour
     private float planeWidth = 10;
 
     private Vector3 position;  // current road component position
+    private RoadComponent startRoadComponent;
 
     private void Awake()
     {
@@ -30,6 +31,8 @@ public class RoadLooper : MonoBehaviour
             component = transform.GetChild(i).GetComponent<RoadComponent>();
             collection.Add(component);
             collection.AppendComponentList(component);
+            if (i == 0)
+                startRoadComponent = component;
         }
     }
 
@@ -89,18 +92,40 @@ public class RoadLooper : MonoBehaviour
         var refrenceCmpnt = collection.GetRoadByIndex(index);
         var position = refrenceCmpnt.GetPosition();
         toBePlaced.SetPosition(position);
-        collection.RemoveFromList(toBePlaced);
-        count--;
+        int id = toBePlaced.GetId();
         RoadComponent cmpnt;
+        int otherId;
         // move components from index to the end forward
-        for (int i = index; i < count; i++) {
+        for (int i = index; i < count; i++) {            
             cmpnt = collection.GetRoadByIndex(i);
-            position = cmpnt.GetPosition();
+            otherId = cmpnt.GetId();
+            if (id == otherId)
+                continue;
             position.z += planeWidth;
             cmpnt.SetPosition(position);
         }
         // add newly placed component to the list
+        collection.RemoveFromList(toBePlaced);
         collection.InsertComponent(toBePlaced, index);
         toBePlaced.Place();
+    }
+
+    public void _Reset() {
+        int index = collection.IndexOf(startRoadComponent);
+        int size = collection.CountRoadComponents();
+        // int rotate = size - index;
+        collection.Rotate(index);
+        // string msg = "";
+        // for (int i = 0; i < size; i++)
+        //     msg += collection.GetRoadByIndex(i).GetId() + ", ";
+        RoadComponent cmpnt = collection.GetRoadByIndex(0);
+        Vector3 position = Vector3.zero;
+        cmpnt.SetPosition(position);
+        for (int i = 1; i < size; i++) {            
+            position.z += planeWidth;
+            cmpnt = collection.GetRoadByIndex(i);
+            cmpnt.SetPosition(position);
+            cmpnt.Place();
+        }
     }
 }
