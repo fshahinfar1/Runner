@@ -13,6 +13,7 @@ namespace Player
         private Material material;
 
         public float forwardSpeed = 1.0f;
+        private float startForwardSpeed;
         public float horizontalSpeed = 1.0f;
         public float bodyWidth;
 
@@ -25,6 +26,7 @@ namespace Player
 
         private void Awake()
         {
+            startForwardSpeed = forwardSpeed;
             state = new PlayerState();
             rigidbody = GetComponent<Rigidbody>();
             material =  GetComponent<Renderer>().material;
@@ -163,6 +165,7 @@ namespace Player
             ignoreCollision = false;
             transform.position = startGlobalPosition;
             rigidbody.velocity = new Vector3();
+            forwardSpeed = startForwardSpeed;
             // TODO: remove all forces applied to rigidbody
         }
 

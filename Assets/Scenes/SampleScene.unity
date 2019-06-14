@@ -604,7 +604,7 @@ PrefabInstance:
     - target: {fileID: 754569578085841172, guid: 87fb7314299623e4081cdbd66d5c5919,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 754569578085841172, guid: 87fb7314299623e4081cdbd66d5c5919,
         type: 3}
@@ -1958,6 +1958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2089400149}
   roadLooper: {fileID: 870607058}
+  roadTrigger: {fileID: 120508481}
   maxPlayerSpeed: 6
   speedIncreaseSteps: 0.25
 --- !u!4 &1229940157

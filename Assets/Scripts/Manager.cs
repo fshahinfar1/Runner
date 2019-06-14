@@ -6,6 +6,7 @@ public class Manager : MonoBehaviour
 {
     public Player.PlayerCharacter player;
     public RoadLooper roadLooper;
+    public RoadUpdateTrigger roadTrigger;
 
     public float maxPlayerSpeed;
     public float speedIncreaseSteps = 0.25f;
@@ -38,6 +39,8 @@ public class Manager : MonoBehaviour
     private void PlayerFaceHit() 
     {
         player.ResetPlayer();
-        roadLooper.ResetOrigin();
+        roadLooper._Reset();
+        roadTrigger._Reset();
+        RoadPlacerLogic._Reset();
     }
 }
